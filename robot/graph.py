@@ -7,14 +7,16 @@ import matplotlib.pyplot as plt
 
 class Graph:
 
-    def __init__(self):
-        print("test")
+    def __init__(self, title="Wizualizacja"):
+        self.title = title
 
     def plot_graph(self, window):
         fig = plt.figure()
         ax = plt.axes(projection='3d')
         ax.set_title('Wizualizacja')
 
+
+        # PLOTTING
         # Data for a three-dimensional line
         zline = np.linspace(0, 15, 1000)
         xline = np.sin(zline)
@@ -27,7 +29,7 @@ class Graph:
         ydata = np.cos(zdata) + 0.1 * np.random.randn(100)
         ax.scatter3D(xdata, ydata, zdata, c=zdata, cmap='Greens');
 
-        # add graph to canva
+        # add graph to canvas
         self.show_graph(fig, window)
 
     @staticmethod
