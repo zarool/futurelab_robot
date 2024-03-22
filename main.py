@@ -1,21 +1,20 @@
 from app.Window import Window
-from robot.Graph import Graph
+
 from robot.Robot import Robot
 
 # ROBOT CONFIGURATION PARAMETERS
-theta = [30, 1.5, 0]  # [rad]
-lambd = [0, 1, 1]  # [m]
-length = [1, 1, 0]  # [m]
-alpha = [3 / 2 * 3.14, 0, 0]  # [rad]
+theta = [0, 30, 50]  # [deg]
+lambd = [0, 0, 0]  # [m]
+length = [0.4, 1, 1]  # [m]
+alpha = [0, 0, 0]  # [rad]
 robot = Robot(theta, lambd, length, alpha)
 
-print(robot)
+# RUN WINDOW
+app = Window("Test", 500, 500)
 
-# window class with tkinter usage
-window = Window("Test", 500, 500)
+# SCRIPT
+# print(robot)
 
-# graph class for showing 3D graph and visualizing robot movement
-graph = Graph()
+app.update(robot.theta, robot.length)
+app.run()
 
-graph.plot_graph(window.root)
-window.run()
