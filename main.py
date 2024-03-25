@@ -15,6 +15,8 @@ app = Window("Test", 500, 500)
 # SCRIPT
 # print(robot)
 
+print("test test")
+
 app.update(robot.theta, robot.length)
 app.run()
 
