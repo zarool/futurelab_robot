@@ -1,2 +1,2 @@
-# futurelab_robot
-Projekt FutureLab manipulatora podwodnego 
+# futurelab robot
+Projekt FutureLab manipulatora podwodnego
