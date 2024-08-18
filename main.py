@@ -1,2 +1,5 @@
-import app.plot as plt
-import firmware.communication as com
+from app.app import App
+
+app = App()
+
+app.run()
