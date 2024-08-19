@@ -104,8 +104,6 @@ class Communicator:
     def stop_receiving(self):
         self.running = False
 
-
-
     def get_data(self):
         return [self.id,
             self.voltage,
