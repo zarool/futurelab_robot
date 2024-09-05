@@ -161,4 +161,4 @@ cython_debug/
 
 # Custom folders
 archive/*
-old-to-merge/*
+old-to-merge/
