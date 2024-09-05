@@ -43,6 +43,21 @@ class Communicator:
             except serial.SerialException as e:
                 print(f"Błąd wysyłania komendy: {e}")
 
+    def send_command_camera(self, command):
+        if command and ser_esp32 is not None and ser_esp32.is_open:
+            try:
+                full_command = f"*{command}*"
+                ser_esp32.write(full_command.encode('utf-8') + b'\n')
+                print(f"Wysłano komendę: {full_command}")
+            except serial.SerialException as e:
+                print(f"Błąd wysyłania komendy: {e}")
+
+    def move_camera(self, id_camera, position):
+        id_camera = int(id_camera)
+        position = int(position)
+        self.send_command_camera(f"{id_camera},{position}")
+
+
     def move(self, id, position):
         self.send_command(f"np {id},{position},{self.speed},{self.acc}")
         self.positions[id - 1] = position
