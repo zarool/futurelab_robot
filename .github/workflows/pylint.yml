@@ -18,9 +18,9 @@ jobs:
 
     - name: Install Python modules
       run: |
-        apt install python3-tk 
-        apt install python3-pil
-        apt install python3-pil.imagetk
+        sudo apt install python3-tk 
+        sudo apt install python3-pil
+        sudo apt install python3-pil.imagetk
 
     - name: Install Python pylint
       run: |
