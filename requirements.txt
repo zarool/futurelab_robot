@@ -2,5 +2,3 @@ customtkinter
 numpy 
 matplotlib 
 pyserial
-threading
-tkinter
