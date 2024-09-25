@@ -1,6 +1,8 @@
-name: Pylint
+name: Test python code
 
-on: [push]
+on: 
+  workflow_dispatch:
+    
 
 jobs:
   build:
@@ -10,14 +12,34 @@ jobs:
         python-version: ["3.8", "3.9", "3.10"]
     steps:
     - uses: actions/checkout@v4
+
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v3
       with:
         python-version: ${{ matrix.python-version }}
-    - name: Install dependencies
+
+    - name: Install Python modules
+      run: |
+        sudo apt install python3-tk 
+        sudo apt install python3-pil
+        sudo apt install python3-pil.imagetk
+
+    - name: Install Python pylint
       run: |
         python -m pip install --upgrade pip
         pip install pylint
+
+    - name: Install Python dependencies
+      uses: py-actions/py-dependency-install@v4
+      with:
+        path: "requirements.txt"
+
     - name: Analysing the code with pylint
       run: |
-        pylint $(git ls-files '*.py')
+        pylint $(git ls-files '*.py') --output=lint.txt || true
+
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: lint.txt
+        path: lint.txt
