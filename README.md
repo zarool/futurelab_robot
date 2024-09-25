@@ -1,11 +1,8 @@
-# futurelab robot
-Projekt FutureLab manipulatora podwodnego
 
+![FL logo](./docs/assets/futurelab.png)
+![PK WM logo](./docs/assets/pkwm.png)
 
-## Dependencies
+### Projekt manipulatora podwodnego w ramach projektu FutureLab. Rozszerzenie istniejącego już pojazdu podwodnego.
 
-pyserial
-customtktiner
-numpy
-matplotlib
-tktiner
+---
+
