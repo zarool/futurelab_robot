@@ -29,5 +29,5 @@ Można również wykorzystać przygotowany skrypt znajdujący się w repozytoriu
 utils/connect-jetson.sh <ŚCIEŻKA/DO/KLUCZA>
 ```
 
->*__UWAGA__*
+>*__UWAGA__* </br>
 > Niesprecyzowanie klucza skutkuje koniecznością wpisania hasła do Orina przy każdorazowej próbie wykonania komendy `ssh` albo `scp`
