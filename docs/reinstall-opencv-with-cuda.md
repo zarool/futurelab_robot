@@ -33,4 +33,4 @@ gmake: *** [Makefile:166: all] Error 2
 ```
 
 Problem występuje przez złą wersję CUDA, w której został znaleziony bug. Konieczne jest podbicie wersji CUDA albo pobranie niższej.
-W tym celu kroki zmiany wersji CUDA zostały opisane [tutaj](./docs/change-cuda-version.md)
+W tym celu kroki zmiany wersji CUDA zostały opisane [tutaj](./change-cuda-version.md)
