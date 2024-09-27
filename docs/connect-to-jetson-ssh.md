@@ -1,5 +1,8 @@
 ## Przygotowanie do połączeń SSH
 
+>*__UWAGA__* </br>
+> Niesprecyzowanie klucza skutkuje koniecznością wpisania hasła do Orina przy każdorazowej próbie wykonania komendy `ssh` albo `scp`
+
 W celu łączenia się z Jetsonem poprzez SSH dobrym sposobem jest logowanie przy użyciu zainstalowanego już na urządzeniu klucza prywatnego.
 W tym celu należy plik [`utils/ssh/jetson-key`]("./utils/ssh/jetson-key") przenieść do odpowiedniego katalogu w zależności od dystrubucji:
 
@@ -28,6 +31,3 @@ Można również wykorzystać przygotowany skrypt znajdujący się w repozytoriu
 ```bash
 utils/connect-jetson.sh <ŚCIEŻKA/DO/KLUCZA>
 ```
-
->*__UWAGA__* </br>
-> Niesprecyzowanie klucza skutkuje koniecznością wpisania hasła do Orina przy każdorazowej próbie wykonania komendy `ssh` albo `scp`
