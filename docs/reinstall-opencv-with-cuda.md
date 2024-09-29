@@ -1,14 +1,14 @@
 # Update OpenCV ze wsparciem CUDA oraz GSTREAMER
 
+Skrypt jest zmodyfikowaną wersją z innego [repo](https://github.com/mdegans/nano_build_opencv).
+
 Update zajmuje ~3h, kawa do umilenia czasu obowiązkowa ☕
 
 W pliku `installer.sh` należy zmienić
-  - `-D CUDA_ARCH_BIN=8.9`
   - `-D CUDNN_VERSION='8.9'`
 
 Uruchamiamy skrypt z poziomu Orina w folderze `podwodny`. Możliwa jest zmiana zainstalowanej wersji OpenCV.
 
-Skrypt jest zaktualizowaną wersją z innego [repo](https://github.com/mdegans/nano_build_opencv).
 Poprawione zostały wersje instalowanych bilbiotek oraz nowsza wersja CUDNN do OpenCV.
 
 ```bash
@@ -20,7 +20,7 @@ Jeżeli wystąpią problemy, należy kierować się outputem z errorów i sprób
 
 ### Częste problemy podczas instalacji
 
-- `Ambiguous overload for 'operator!='`
+- `Ambiguous overload for 'operator!='` - `CUDA: 12.2`
 
 ```bash
 /home/di0n/Desktop/opencv-4.8.0/modules/dnn/src/layers/../cuda4dnn/primitives/normalize_bbox.hpp:114:24: error: ambiguous overload for ‘operator!=’ (operand types are ‘__half’ and ‘double’)
