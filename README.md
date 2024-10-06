@@ -16,12 +16,24 @@
 
 <a name="#startup"/>
 
+
+
 ## 2. Użyte biblioteki
 
 <a name="#dependencies"/>
 
+| Nazwa | Wersja  | 
+|--|:--:|
+| JetPack | 6.0 [L4T 36.3.0] |
+| CUDA | 12.2.140 |
+| cuDNN | 8.9.4.25 |
+| CUDA GPU Arch | 8.7 | 
+| OpenCV | 4.9.0 | 
+| GStreamer | 1.20.3 |
+| Python | 3.10.12 |
 
-
+>*__PRZYDATNE__*
+>Do sprawdzenia aktualnych wersji bibliotek i firmware'u w terminalu wpisz `jetson_release`
 
 ## 3. Struktura programu - schemat UML
 
