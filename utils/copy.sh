@@ -3,24 +3,38 @@
 # to Jetson Nano via ssh          #
 ###################################
 
-jetson_key=$1
+# jetson address
+jetson_name=orin
+jetson_address=192.168.55.1
+jetson_host=$jetson_name@$jetson_address
 
+# copying method selection
+jetson_key=$1
+command="-i ${jetson_key}"
+
+# open ssh connection if no key specified
 if [ -z $jetson_key ]; then
-    ssh -fMNS ssh-conn -o ControlPersist=yes orin@192.168.55.1
-    ssh -o ControlPath=ssh-conn orin@192.168.55.1 "mkdir -p ~/podwodny && mkdir -p ~/podwodny/src && mkdir -p ~/podwodny/utils"
-    scp -o ControlPath=ssh-conn -r *.py orin@192.168.55.1:~/podwodny/
-    scp -o ControlPath=ssh-conn -r src/* orin@192.168.55.1:~/podwodny/src/
-    scp -o ControlPath=ssh-conn -r utils/opencv-cuda-installer/* orin@192.168.55.1:~/podwodny/utils/
-    ssh -o ControlPath=ssh-conn orin@192.168.55.1 "chmod +x ~/podwodny/utils/installer.sh"
-    ssh -S ssh-conn -O exit orin@192.168.55.1
-    echo All files copied using password.
-    exit 0
+    command="-o ControlPath=ssh-conn"
+    ssh -fMNS ssh-conn -o ControlPersist=yes $jetson_host
 fi
 
-ssh -i $jetson_key orin@192.168.55.1 "mkdir -p ~/podwodny && mkdir -p ~/podwodny/src && mkdir -p ~/podwodny/utils"
-scp -i $jetson_key -r *.py orin@192.168.55.1:~/podwodny/
-scp -i $jetson_key -r src/* orin@192.168.55.1:~/podwodny/src/
-scp -i $jetson_key -r utils/opencv-cuda-installer/* orin@192.168.55.1:~/podwodny/utils/
-ssh -i $jetson_key orin@192.168.55.1 "chmod +x ~/podwodny/utils/installer.sh"
-echo All files copied using ssh key.
+ssh $command $jetson_host "mkdir -p ~/podwodny &&
+                            mkdir -p ~/podwodny/src &&
+                            mkdir -p ~/podwodny/utils &&
+                            mkdir -p ~/podwodny/utils/packages"
+scp $command -r *.py $jetson_host:~/podwodny/
+scp $command -r src/* $jetson_host:~/podwodny/src/
+scp $command -r utils/opencv-cuda-installer/* $jetson_host:~/podwodny/utils/
+scp $command -r utils/packages/* $jetson_host:~/podwodny/utils/packages/
+ssh $command $jetson_host "chmod +x ~/podwodny/utils/installer.sh"
+ssh $command $jetson_host "chmod +x ~/podwodny/utils/packages/install-packages.sh"
+
+echo "--------------------------------"
+
+# close ssh connection
+if [ -z $jetson_key ]; then
+    ssh -S ssh-conn -O exit $jetson_host
+fi
+
+echo [+] All project files copied to Jetson.
 exit 0
