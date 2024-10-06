@@ -14,13 +14,13 @@
 
 ## 1. Uruchomienie
 
-<a name="#startup"/>
+<a name="startup"></a>
 
 
 
 ## 2. Użyte biblioteki
 
-<a name="#dependencies"/>
+<a name="dependencies"></a>
 
 | Nazwa | Wersja  | 
 |--|:--:|
@@ -32,15 +32,13 @@
 | GStreamer | 1.20.3 |
 | Python | 3.10.12 |
 
->*__PRZYDATNE__*
+>*__PRZYDATNE__* </br>
 >Do sprawdzenia aktualnych wersji bibliotek i firmware'u w terminalu wpisz `jetson_release`
 
 ## 3. Struktura programu - schemat UML
 
-<a name="#uml"/>
+<a name="uml"></a>
 
 ## 4. Zrzuty ekranu
 
-<a name="#screenshot"/>
-
----
+<a name="screenshot"></a>
