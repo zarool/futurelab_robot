@@ -1,10 +1,6 @@
-from plot import gui
-import communication as com
 
+from app.gui import App
 
+app = App()
 
-gui()
-
-
-
-
+app.run()
