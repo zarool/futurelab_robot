@@ -1,5 +1,5 @@
 import customtkinter as ctk
-import tkinter as ttk
+import tkinter as tk
 from tkinter import ttk
 
 import numpy as np
@@ -9,10 +9,14 @@ from mpl_toolkits.mplot3d import Axes3D
 from PIL import Image, ImageTk, ImageSequence
 
 import app.ui as ui
+from app.plot import Plot
+from app.conn import Communicator
 
+COLUMNS_TEXT = ("Id", "Voltage", "Current", "Temperature", "Position", "Load")
+COLUMNS_HEADER = ["Id", "Voltage", "Current", "Temperature", "Position", "Load"]
 
 class App:
-    def __init__(self, com) -> None:
+    def __init__(self) -> None:
         ########################
         ############## GUI CONST
         ctk.set_appearance_mode("dark")  # Ustawienie ciemnego trybu
@@ -28,8 +32,8 @@ class App:
 
         ########################
         ################ OBJECTS
-        self.communicator = com
-
+        self.communicator = Communicator()
+        self.plot = Plot()
 
         ########################
         ########## GUI VARIABLES
@@ -52,18 +56,19 @@ class App:
 
         self.btn_refresh = 0
         self.btn_conn = ctk.StringVar()
-        self.com_ports = com.get_com_ports()
+        self.com_ports = self.communicator.get_com_ports()
 
         self.combo_arduino = 0
         self.btn_refresh_arduino = 0
         self.btn_conn_arduino = ctk.StringVar()
-        self.com_ports_arduino = com.get_com_ports()
+        self.com_ports_arduino = self.communicator.get_com_ports()
 
     def gui(self):
         "Allocate buttons and objects on window"
 
         ########################
         ########## CREATE FRAMES (TABS ON NAVBAR)
+
         main_frame = ctk.CTkFrame(self.root)
         self.frames[main_frame] = main_frame
 
@@ -80,8 +85,10 @@ class App:
         button2 = ctk.CTkButton(self.navbar, text="Dane", command=lambda: show_frame(data_frame))
         button2.grid(row=0, column=1, padx=5, pady=5)
 
+
         ########################
         ########## MAIN FRAME
+
         nr_1 = ui.slider(main_frame, 0, 5, 0, 4096, 10, 10, "1", "Pos", 1, self.communicator)
         nr_2 = ui.slider(main_frame, 1, 5, 0, 4096, 10, 10, "2", "Pos", 1, self.communicator)
         nr_3 = ui.slider(main_frame, 2, 5, 0, 4096, 10, 10, "3", "Pos", 1, self.communicator)
@@ -103,28 +110,72 @@ class App:
         ui.text_label(main_frame, "Offset 3:", "Helvetica", 12, 2, 6, 10, 10, "w")
         ui.text_label(main_frame, "Offset 4:", "Helvetica", 12, 3, 6, 10, 10, "w")
 
+        btn_change_variable = ui.button(main_frame, "Toggle torque", None, self.communicator.toggle_and_send_command, 2, 3, 10, 10)
+        self.combo = ui.dropdown_list(main_frame, self.com_ports, "<<ComboboxSelected>>", self.on_combobox_select, 1, 1, 10, 10)
+        self.combo.configure(self.com_ports)
+
+        status_torque = ui.text_label(main_frame, "Status: " + str(self.communicator.toggle), "Helvetica", 12, 3, 3, 10, 10, "w")
+        status_torque.configure("Status: " + str(self.communicator.toggle))
+
 
         ########################
         ########## PLOT DISPLAY
 
-        # canvas = FigureCanvasTkAgg(fig, master=plot_frame)
+        ui.text_label(main_frame, "X:", "Helvetica", 12, 0, 0, 10, 10, "w")
+        ui.text_label(main_frame, "Y:", "Helvetica", 12, 1, 0, 10, 10, "w")
+        ui.text_label(main_frame, "Z:", "Helvetica", 12, 2, 0, 10, 10, "w")
+        ui.text_label(main_frame,"ID","Helvetica", 12, 1, 2, 10, 10, None)
+        ui.text_label(main_frame,"Position","Helvetica", 12, 1, 2, 10, 10, None)
+
+        self.entry_x = ui.text_gap(main_frame, 200, 0, 0, 25, 10 ,"w")
+        self.entry_y = ui.text_gap(main_frame, 200, 1, 0, 25, 10 ,"w")
+        self.entry_z = ui.text_gap(main_frame, 200, 2, 0, 25, 10 ,"w")
+
+
+        # canvas = FigureCanvasTkAgg(fig, master=main_frame)
         # canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
         # canvas.draw()
 
-        # self.com.start_receive_data_thread(update_display)
+        btn_compute = ui.button(main_frame,"Oblicz", None, update_robot, 3, 0, 50, 10,'w', None)
+        btn_move = ui.button(main_frame, "Wykonaj", None, test, 2, 2, 10, 10, None, None)
+        btn_transport = ui.button(main_frame, "Transport", None, servo.transport_mode, 0, 3, 10, 10, None, None)
+
+        coordinates_label = ctk.CTkLabel(main_frame, text="End-Effector Coordinates:\nX: 0.00, Y: 0.00, Z: 0.00")
+        coordinates_label.grid(row=4, column=0, columnspan=2, padx=50, pady=10, sticky="w")
+
+        ########################
+        ########## CAMERA SECTION
+
+        button_showcase = ui.button(main_frame, "Showcase", None, showcase_camera, 3, 4, 10, 10, None, None)
+
+        ########################
+        ########## CONNECTION SECTION
+
+        id_move_s = ui.text_gap(main_frame, 200, 0, 2, 25, 10 ,"w")
+        position_move_s = ui.text_gap(main_frame, 200, 1, 2, 25, 10 ,"w")
+
+        refresh_button_ports_com = ui.button(main_frame,"Refresh COM Ports", None, refresh_com_ports, 2, 1, 10, 10, "w", None)
+        refresh_button = ui.button(main_frame, None, self.btn_conn, self.communicator.refresh_connection_esp32, 3, 1, 10, 10)
+
+        arduino_combobox = ui.dropdown_list(main_frame, self.com_ports_arduino, "<<ComboboxSelected>>", on_combobox_select_arduino, 1, 2, 10, 10)
+        arduino_combobox.configure(self.com_ports_arduino)
+        arduino_refresh_button_ports_com = ui.button(main_frame, "Refresh Arduino Ports", None, refresh_arduino_ports, 2, 2, 10, 10, "w", None)
+        arduino_refresh_button = ui.button(main_frame, None, self.btn_conn_arduino, self.communicator.refresh_connection_arduino, 3, 2, 10, 10)
 
 
         ########################
         ########## DATA FRAME
-        # Zawartość ramki table_frame
-        columns = ("Id", "Voltage", "Current", "Temperature", "Position", "Load")
-        texts = ["Id", "Voltage", "Current", "Temperature", "Position", "Load"]
-        table = ui.table(data_frame, columns, "headings", texts, 160, 6, 16, 20, 20, 'nsew')
+
+        table = ui.table(data_frame, COLUMNS_TEXT, "headings", COLUMNS_HEADER, 160, 6, 16, 20, 20, 'nsew')
 
     def run(self):
         "Main run function, will start threads and functionality of app"
 
         self.gui()
+
+        self.communicator.start_receive_data_thread(update_display)
+        self.communicator.refresh_connection_esp32()
+        self.plot.init_plot()
 
         self.root.after(100, self.update_table)
         self.root.mainloop()
@@ -132,51 +183,8 @@ class App:
     def update_table(self):
         pass
 
+    def on_combobox_select(self):
+        pass
 
     def event_handler(self):
         pass
-
-
-
-#     button_change_variable = fg.new_button(control_frame, "Toggle torque", None, toggle_and_send_command, 2, 3, 10, 10, None, None)
-
-#     combobox = fg.new_dropdown_list(communication_frame, com_ports_var, "<<ComboboxSelected>>", on_combobox_select, 1, 1, 10, 10)
-#     combobox.configure(com_ports_var)
-
-#     status_torque = fg.new_text_label(control_frame, "Status: " + str(toggle_var), "Helvetica", 12, 3, 3, 10, 10, "w")
-#     status_torque.configure("Status: " + str(toggle_var))
-
-#     fg.new_text_label(control_frame, "X:", "Helvetica", 12, 0, 0, 10, 10, "w")
-#     fg.new_text_label(control_frame, "Y:", "Helvetica", 12, 1, 0, 10, 10, "w")
-#     fg.new_text_label(control_frame, "Z:", "Helvetica", 12, 2, 0, 10, 10, "w")
-#     fg.new_text_label(control_frame,"ID","Helvetica", 12, 1, 2, 10, 10, None)
-#     fg.new_text_label(control_frame,"Position","Helvetica", 12, 1, 2, 10, 10, None)
-
-#     entry_x = fg.new_text_gap(control_frame, 200, 0, 0, 25, 10 ,"w")
-#     entry_y = fg.new_text_gap(control_frame, 200, 1, 0, 25, 10 ,"w")
-#     entry_z = fg.new_text_gap(control_frame, 200, 2, 0, 25, 10 ,"w")
-
-#     id_move_s = fg.new_text_gap(control_frame, 200, 0, 2, 25, 10 ,"w")
-#     position_move_s = fg.new_text_gap(control_frame, 200, 1, 2, 25, 10 ,"w")
-
-
-#     button_compute = fg.new_button(control_frame,"Oblicz", None, update_robot, 3, 0, 50, 10,'w', None)
-#     button_move_to = fg.new_button(control_frame, "Wykonaj", None, test, 2, 2, 10, 10, None, None)
-#     button_transport = fg.new_button(control_frame, "Transport", None, servo.transport_mode, 0, 3, 10, 10, None, None)
-
-#     button_showcase = fg.new_button(servo_camera_frame, "Showcase", None, showcase_camera, 3, 4, 10, 10, None, None)
-
-#     refresh_button_ports_com = fg.new_button(communication_frame,"Refresh COM Ports", None, refresh_com_ports, 2, 1, 10, 10, "w", None)
-#     refresh_button = fg.new_button(communication_frame, None, button_connection, update_refresh_connection_esp32, 3, 1, 10, 10, None, None)
-
-#     arduino_combobox = fg.new_dropdown_list(communication_frame, arduino_ports_var, "<<ComboboxSelected>>", on_combobox_select_arduino, 1, 2, 10, 10)
-#     arduino_combobox.configure(arduino_ports_var)
-#     arduino_refresh_button_ports_com = fg.new_button(communication_frame, "Refresh Arduino Ports", None, refresh_arduino_ports, 2, 2, 10, 10, "w", None)
-#     arduino_refresh_button = fg.new_button(communication_frame, None, arduino_button_connection, update_refresh_connection_arduino, 3, 2, 10, 10, None, None)
-
-#     update_refresh_connection_esp32()
-
-#     coordinates_label = ctk.CTkLabel(control_frame, text="End-Effector Coordinates:\nX: 0.00, Y: 0.00, Z: 0.00")
-#     coordinates_label.grid(row=4, column=0, columnspan=2, padx=50, pady=10, sticky="w")
-
-#     init_plot()

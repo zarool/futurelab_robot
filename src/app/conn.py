@@ -1,3 +1,7 @@
+class Communicator():
+    def __init__(self) -> None:
+        pass
+
 def refresh_com_ports():
     com_ports = com.get_com_ports()
     print(f"Available COM ports: {com_ports}")  # Dodaj logi debugujące

@@ -1,5 +1,12 @@
 import math
 
+class Plot:
+    def __init__(self) -> None:
+        pass
+
+    def init_plot(self):
+        pass
+
 def plot_robot(theta1, theta2, theta3, theta4):
     global ax, coordinates_label
 

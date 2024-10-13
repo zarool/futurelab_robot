@@ -61,7 +61,6 @@ class text_label():
         self.create_label()
 
     def create_label(self):
-
         label_config = {
             'row': self.row,
             'column': self.column,
@@ -166,8 +165,6 @@ class table:
             self.table.heading(col, text=text)
             self.table.column(col, width=self.width)
         self.table.grid(row=self.row, column=self.column, padx=self.padx, pady=self.pady, sticky=self.sticky)
-
-
 
     def get_children(self):
         return self.table.get_children()
