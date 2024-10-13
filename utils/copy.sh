@@ -24,7 +24,7 @@ ssh $command $jetson_host "mkdir -p ~/podwodny &&
                             mkdir -p ~/podwodny/utils/packages"
 scp $command -r *.py $jetson_host:~/podwodny/
 scp $command -r src/* $jetson_host:~/podwodny/src/
-scp $command -r utils/opencv-cuda-installer/* $jetson_host:~/podwodny/utils/
+scp $command -r utils/opencv-cuda/* $jetson_host:~/podwodny/utils/
 scp $command -r utils/packages/* $jetson_host:~/podwodny/utils/packages/
 ssh $command $jetson_host "chmod +x ~/podwodny/utils/installer.sh"
 ssh $command $jetson_host "chmod +x ~/podwodny/utils/packages/install-packages.sh"
