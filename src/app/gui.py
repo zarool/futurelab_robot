@@ -154,14 +154,13 @@ class App:
         id_move_s = ui.text_gap(main_frame, 200, 0, 2, 25, 10 ,"w")
         position_move_s = ui.text_gap(main_frame, 200, 1, 2, 25, 10 ,"w")
 
-        refresh_button_ports_com = ui.button(main_frame,"Refresh COM Ports", None, refresh_com_ports, 2, 1, 10, 10, "w", None)
-        refresh_button = ui.button(main_frame, None, self.btn_conn, self.communicator.refresh_connection_esp32, 3, 1, 10, 10)
+        refresh_button_ports_com = ui.button(main_frame,"Refresh COM Ports", None, self.refresh_com_ports, 2, 1, 10, 10, "w", None)
+        refresh_button = ui.button(main_frame, None, self.btn_conn, self.refresh_connection_esp32, 3, 1, 10, 10)
 
-        arduino_combobox = ui.dropdown_list(main_frame, self.com_ports_arduino, "<<ComboboxSelected>>", on_combobox_select_arduino, 1, 2, 10, 10)
+        arduino_combobox = ui.dropdown_list(main_frame, self.com_ports_arduino, "<<ComboboxSelected>>", self.on_combobox_select_arduino, 1, 2, 10, 10)
         arduino_combobox.configure(self.com_ports_arduino)
-        arduino_refresh_button_ports_com = ui.button(main_frame, "Refresh Arduino Ports", None, refresh_arduino_ports, 2, 2, 10, 10, "w", None)
-        arduino_refresh_button = ui.button(main_frame, None, self.btn_conn_arduino, self.communicator.refresh_connection_arduino, 3, 2, 10, 10)
-
+        arduino_refresh_button_ports_com = ui.button(main_frame, "Refresh Arduino Ports", None, self.refresh_arduino_ports, 2, 2, 10, 10, "w", None)
+        arduino_refresh_button = ui.button(main_frame, None, self.btn_conn_arduino, self.refresh_connection_arduino, 3, 2, 10, 10)
 
         ########################
         ########## DATA FRAME
@@ -174,7 +173,7 @@ class App:
         self.gui()
 
         self.communicator.start_receive_data_thread(update_display)
-        self.communicator.refresh_connection_esp32()
+        self.refresh_connection_esp32()
         self.plot.init_plot()
 
         self.root.after(100, self.update_table)
@@ -185,6 +184,23 @@ class App:
 
     def on_combobox_select(self):
         pass
+    
+    def refresh_com_ports(self):
+        pass
+    
+    def refresh_connection_esp32(self):
+        pass
+
+    def on_combobox_select_arduino(self):
+        pass
+
+    def refresh_arduino_ports(self):
+        pass
+
+    def refresh_connection_arduino(self):
+        pass
+
 
     def event_handler(self):
+        """Keyboard event handler - Q to quit, N/B to move between photos etc."""
         pass

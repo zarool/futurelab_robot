@@ -2,41 +2,35 @@ class Communicator():
     def __init__(self) -> None:
         pass
 
-def refresh_com_ports():
-    com_ports = com.get_com_ports()
-    print(f"Available COM ports: {com_ports}")  # Dodaj logi debugujące
+    def refresh_com_ports(self):
+        com_ports = com.get_com_ports()
+        print(f"Available COM ports: {com_ports}")  # Dodaj logi debugujące
 
-    if len(com_ports) == 1:
-        selected_port = com_ports[0]
-        com_ports_var.set(selected_port)
-        combobox.set(selected_port)
-        com.set_selected_port(selected_port)
-        print(f"Automatically selected COM port: {selected_port}")
-        update_refresh_connection_esp32()  # Automatyczne połączenie po wybraniu portu
-    else:
-        # com_ports_var.set(com_ports[0] if com_ports else '')
-        combobox.configure(com_ports)
+        if len(com_ports) == 1:
+            selected_port = com_ports[0]
+            com_ports_var.set(selected_port)
+            combobox.set(selected_port)
+            com.set_selected_port(selected_port)
+            print(f"Automatically selected COM port: {selected_port}")
+            update_refresh_connection_esp32()  # Automatyczne połączenie po wybraniu portu
+        else:
+            # com_ports_var.set(com_ports[0] if com_ports else '')
+            combobox.configure(com_ports)
 
-def update_refresh_connection_esp32():
-    connection_status = com.connect_esp32()
-    if connection_status == 1:
-        button_connection.set("Connected")
-        refresh_button.change_color('green')
-    else:
-        button_connection.set("Refresh Connection")
-        refresh_button.change_color('red')
-        print("Connection failed.")
+    def update_refresh_connection_esp32(self):
+        connection_status = com.connect_esp32()
+        if connection_status == 1:
+            button_connection.set("Connected")
+            refresh_button.change_color('green')
+        else:
+            button_connection.set("Refresh Connection")
+            refresh_button.change_color('red')
+            print("Connection failed.")
 
 
-def thetas_to_0():
-    plot_robot(0,-3.14,1,1)
+    def thetas_to_0(self):
+        plot_robot(0,-3.14,1,1)
 
-def test():
-    print("czesc")
-    if(id_move_s.get() is None and position_move_s.get() is None):
-        print("uzupełnij luke")
-    else:
-        com.move(int(id_move_s.get()),int(position_move_s.get()))
 
 def uptd_offset():
     off_1 = offset_1.get()

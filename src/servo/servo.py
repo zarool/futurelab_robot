@@ -1,6 +1,6 @@
 import time
 
-import servo.communication as com
+import servo.driver as com
 
 
 def move_to_position(pos1, pos2, pos3, pos4, off_1, off_2, off_3, off_4):
