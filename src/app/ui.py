@@ -243,7 +243,7 @@ class slider:
         self.label_value.configure(text=f"ID: {self.id_number} {self.text} {int(float(value))}")
 
     def on_slider_value_changed(self, com):
-        if self.move_function is 1:
+        if self.move_function == 1:
             if slider.selected_slider:
                 id_number = slider.selected_slider.id_number
                 position = slider.selected_slider.slider.get()

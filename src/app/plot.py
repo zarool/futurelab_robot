@@ -1,61 +1,59 @@
 import math
+import numpy as np
+import matplotlib.pyplot as plt
+
+from robot.matrics import *
+#compute_end_pos, T1, T2, T3, T4, T5
 
 class Plot:
     def __init__(self) -> None:
-        pass
+        self.fig = plt.figure(figsize=(10, 8))
+        self.ax = self.fig.add_subplot(111, projection='3d')
+        self.rx = 0
+        self.ry = 0
+        self.rz = 0
+        
+        self.plot_robot(math.pi, -math.pi/2, 0, 0)
 
-    def init_plot(self):
-        pass
+        
+    def plot_robot(self, theta1, theta2, theta3, theta4):
+        a3 = 152.794
+        a4 = 157.76
+        a5 = 90
 
-def plot_robot(theta1, theta2, theta3, theta4):
-    global ax, coordinates_label
+        self.rx, self.ry, self.rz = compute_end_pos(theta1, theta2, theta3, theta4, a3, a4, a5)
 
-    a3 = 152.794
-    a4 = 157.76
-    a5 = 90
+        self.ax.cla()
 
-    rx, ry, rz = k.compute_end_effector_position(theta1, theta2, theta3, theta4, a3, a4, a5)
+        self.ax.plot([0], [0], [0], 'go', label='Base')
 
-    ax.cla()
+        T1_end = T1(theta1)
+        T2_end = np.dot(T1_end, T2(theta2))
+        T3_end = np.dot(T2_end, T3(theta3, a3))
+        T4_end = np.dot(T3_end, T4(theta4, a4))
+        T5_end = np.dot(T4_end, T5(a5))
 
-    ax.plot([0], [0], [0], 'go', label='Base')
+        points = np.array([
+            [0, 0, 0],
+            T1_end[:3, 3],
+            T2_end[:3, 3],
+            T3_end[:3, 3],
+            T4_end[:3, 3],
+            T5_end[:3, 3]
+        ])
 
-    T1_end = k.T1(theta1)
-    T2_end = np.dot(T1_end, k.T2(theta2))
-    T3_end = np.dot(T2_end, k.T3(theta3, a3))
-    T4_end = np.dot(T3_end, k.T4(theta4, a4))
-    T5_end = np.dot(T4_end, k.T5(a5))
+        self.ax.plot(points[:, 0], points[:, 1], points[:, 2], 'bo-', label='Links')
+        self.ax.plot(self.rx, self.ry, self.rz, 'ro', label='End-Effector')
 
-    points = np.array([
-        [0, 0, 0],
-        T1_end[:3, 3],
-        T2_end[:3, 3],
-        T3_end[:3, 3],
-        T4_end[:3, 3],
-        T5_end[:3, 3]
-    ])
+        self.ax.set_xlim(-200, 200)
+        self.ax.set_ylim(-200, 200)
+        self.ax.set_zlim(-200, 200)
 
-    ax.plot(points[:, 0], points[:, 1], points[:, 2], 'bo-', label='Links')
-    ax.plot(rx, ry, rz, 'ro', label='End-Effector')
+        self.ax.set_xlabel('X')
+        self.ax.set_ylabel('Y')
+        self.ax.set_zlabel('Z')
+        self.ax.set_title('3D Robot Arm')
+        self.ax.legend()
 
-    ax.set_xlim(-200, 200)
-    ax.set_ylim(-200, 200)
-    ax.set_zlim(-200, 200)
 
-    ax.set_xlabel('X')
-    ax.set_ylabel('Y')
-    ax.set_zlabel('Z')
-    ax.set_title('3D Robot Arm')
-    ax.legend()
 
-    coordinates_label.configure(text=f"End-Effector Coordinates:\nX: {rx:.2f}, Y: {ry:.2f}, Z: {rz:.2f}")
-
-def init_plot():
-    global fig, ax
-    fig = plt.figure(figsize=(10, 8))
-    ax = fig.add_subplot(111, projection='3d')
-    plot_robot(math.pi, -math.pi/2, 0, 0)
-
-def update_display(servo_id, voltage, current, temperature, pos, load):
-    data = (servo_id, f"{voltage:.1f}V", f"{current:.1f}A", f"{temperature:.1f}C", pos, f"{load:.1f}N")
-    table.insert_or_update(servo_id, values=data)

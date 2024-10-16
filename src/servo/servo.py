@@ -1,7 +1,4 @@
-import time
-
 import servo.driver as com
-
 
 def move_to_position(pos1, pos2, pos3, pos4, off_1, off_2, off_3, off_4):
     try:
@@ -17,16 +14,3 @@ def move_to_position(pos1, pos2, pos3, pos4, off_1, off_2, off_3, off_4):
 
     except ValueError as e:
         print(f"Błąd konwersji współrzędnych lub punkt poza zasięgiem: {e}")
-
-def transport_mode():
-    com.move(2, 2048)
-    com.move(3, 300)
-    com.move(4, 2048)
-    com.move(5, 2048)
-    time.sleep(5)
-    com.move(1, 2160)
-    time.sleep(5)
-    com.move(2, 3620)
-    com.move(3, 350)
-    com.move(4, 2048)
-    com.move(5, 2048)

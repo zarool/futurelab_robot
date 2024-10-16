@@ -1,4 +1,7 @@
 1. Refactor src code
+    a) add keyboard event handler (quit, changing settings via keyboard)
+    b) reaarange grid in `main_frame` and `data_frame`
+    c) create Robot class 
 2. Update docs
     a) readme
     b) reinstall opencv with cuda
