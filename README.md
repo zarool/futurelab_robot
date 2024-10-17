@@ -29,14 +29,14 @@ Proces wgrania kluczy znajduje się w [tym poradniku](/docs/connect-to-jetson-ss
 
 - Opcja pierwsza, jeżeli planujemy późniejsze modyfikowanie kodu i wgrywanie na repozytorium:
 
-```zsh
+```shell
 mkdir futurelab_robot && cd futurelab_robot
 git init
 git remote add origin git@github.com:zarool/futurelab_robot.git # konieczne jest przygotowanie klucza SSH do GitHub
 git pull --rebase origin main 
 ```
 W celu wgrania nowych zmian należy wrzucić projekt na nowy branch
-```console
+```shell
 git checkout -b new-feature # utworzenie nowego brancha
 git add .
 git commit -m "Added new feature"
@@ -65,7 +65,7 @@ utils/copy.sh ~/.ssh/jetson
 
 <a name="startup3"></a>
 
-```sh
+```shell
 cd podwodny
 python3 src/main.py
 ```
