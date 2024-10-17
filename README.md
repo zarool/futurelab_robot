@@ -8,9 +8,9 @@
 ## Spis treści
 
 1. [Uruchomienie](#startup)
-    1.1 [Pobranie plików](#startup1)
-    1.2 [Kopiowanie do Jetsona](#startup2)
-    1.3 [Uruchomienie](#startup3)
+    - [Pobranie plików](#startup1)
+    - [Kopiowanie do Jetsona](#startup2)
+    - [Uruchomienie](#startup3)
 2. [Biblioteki](#dependencies)
 3. [Struktura programu](#uml)
 4. [Zrzuty ekranu](#screenshots)
@@ -29,35 +29,46 @@ Proces wgrania kluczy znajduje się w [tym poradniku](/docs/connect-to-jetson-ss
 
 - Opcja pierwsza, jeżeli planujemy późniejsze modyfikowanie kodu i wgrywanie na repozytorium:
 
-    ```bash
-    mkdir futurelab && cd futurelab
-    git init
-    git remote add origin git@github.com:zarool/futurelab_robot.git # konieczne jest przygotowanie klucza SSH do GitHub
-    git pull --rebase origin main 
-    ```
-    W celu wgrania nowych zmian należy wrzucić projekt na nowy branch
-
-    ```bash
-    git checkout -b new-feature # utworzenie nowego brancha
-    git add .
-    git commit -m "Added new feature"
-    git push origin main
-    ```
+```bash
+mkdir futurelab_robot && cd futurelab_robot
+git init
+git remote add origin git@github.com:zarool/futurelab_robot.git # konieczne jest przygotowanie klucza SSH do GitHub
+git pull --rebase origin main 
+```
+W celu wgrania nowych zmian należy wrzucić projekt na nowy branch
+```bash
+git checkout -b new-feature # utworzenie nowego brancha
+git add .
+git commit -m "Added new feature"
+git push origin main
+```
 
 - Opcja druga, jeżeli chcemy wgrać sam kod
 
-    ```bash
-    git clone https://github.com/zarool/futurelab_robot
-    ```
+```bash
+git clone https://github.com/zarool/futurelab_robot
+```
 
 ### 1.2 Wgranie plików do Jetsona
 
 <a name="startup2"></a>
 
+```bash
+cd futurelab_robot
+utils/copy.sh
+
+# Opcjonalnie można podać klucz SSH do połączenia z Jetsonem:
+utils/copy.sh ~/.ssh/jetson
+```
 
 ### 1.3 Uruchomienie programu na Jetsonie
 
 <a name="startup3"></a>
+
+```bash
+cd podwodny
+python3 src/main.py
+```
 
 
 ## 2. Użyte biblioteki
