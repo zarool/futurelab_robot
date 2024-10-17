@@ -5,7 +5,6 @@ from tkinter import ttk
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-from mpl_toolkits.mplot3d import Axes3D
 from PIL import Image, ImageTk, ImageSequence
 
 import app.ui as ui

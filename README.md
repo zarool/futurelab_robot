@@ -8,6 +8,9 @@
 ## Spis treści
 
 1. [Uruchomienie](#startup)
+    1.1 [Pobranie plików](#startup1)
+    1.2 [Kopiowanie do Jetsona](#startup2)
+    1.3 [Uruchomienie](#startup3)
 2. [Biblioteki](#dependencies)
 3. [Struktura programu](#uml)
 4. [Zrzuty ekranu](#screenshots)
@@ -16,21 +19,60 @@
 
 <a name="startup"></a>
 
+Pierwszym krokiem jest przygotowanie kluczy znajdujących się w folderze [`utils/ssh/`](/utils/ssh).
+Proces wgrania kluczy znajduje się w [tym poradniku](/docs/connect-to-jetson-ssh.md).
+
+
+### 1.1 Pobranie plików na maszynie lokalnej
+
+<a name="startup1"></a>
+
+- Opcja pierwsza, jeżeli planujemy późniejsze modyfikowanie kodu i wgrywanie na repozytorium:
+
+    ```bash
+    mkdir futurelab && cd futurelab
+    git init
+    git remote add origin git@github.com:zarool/futurelab_robot.git # konieczne jest przygotowanie klucza SSH do GitHub
+    git pull --rebase origin main 
+    ```
+    W celu wgrania nowych zmian należy wrzucić projekt na nowy branch
+
+    ```bash
+    git checkout -b new-feature # utworzenie nowego brancha
+    git add .
+    git commit -m "Added new feature"
+    git push origin main
+    ```
+
+- Opcja druga, jeżeli chcemy wgrać sam kod
+
+    ```bash
+    git clone https://github.com/zarool/futurelab_robot
+    ```
+
+### 1.2 Wgranie plików do Jetsona
+
+<a name="startup2"></a>
+
+
+### 1.3 Uruchomienie programu na Jetsonie
+
+<a name="startup3"></a>
 
 
 ## 2. Użyte biblioteki
 
 <a name="dependencies"></a>
 
-| Nazwa | Wersja  | 
-|--|:--:|
-| JetPack | 6.0 [L4T 36.3.0] |
-| CUDA | 12.2.140 |
-| cuDNN | 8.9.4.25 |
-| CUDA GPU Arch | 8.7 | 
-| OpenCV | 4.9.0 | 
-| GStreamer | 1.20.3 |
-| Python | 3.10.12 |
+| Nazwa         | Wersja           | 
+|---------------|:----------------:|
+| JetPack       | 6.0 [L4T 36.3.0] |
+| CUDA          | 12.2.140         |
+| cuDNN         | 8.9.4.25         |
+| CUDA GPU Arch | 8.7              | 
+| OpenCV        | 4.9.0            | 
+| GStreamer     | 1.20.3           |
+| Python        | 3.10.12          |
 
 >*__PRZYDATNE__* </br>
 >Do sprawdzenia aktualnych wersji bibliotek i firmware'u w terminalu wpisz `jetson_release`
