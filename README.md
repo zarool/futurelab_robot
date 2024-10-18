@@ -94,9 +94,6 @@ python3 src/main.py
 
 <img src="docs/assets/model/model.drawio.png" alt="Struktura modelu"></img>
 
-<img src="docs/assets/model/model.drawio.svg" alt="Struktura modelu"></img>
-
-
 ## 4. Zrzuty ekranu
 
 <a name="screenshot"></a>
