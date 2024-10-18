@@ -12,7 +12,7 @@
     - [Kopiowanie do Jetsona](#startup2)
     - [Uruchomienie](#startup3)
 2. [Biblioteki](#dependencies)
-3. [Struktura programu](#uml)
+3. [Struktura programu](#model)
 4. [Zrzuty ekranu](#screenshots)
 
 ## 1. Uruchomienie
@@ -88,9 +88,14 @@ python3 src/main.py
 >*__PRZYDATNE__* </br>
 >Do sprawdzenia aktualnych wersji bibliotek i firmware'u w terminalu wpisz `jetson_release`
 
-## 3. Struktura programu - schemat UML
+## 3. Struktura programu
 
-<a name="uml"></a>
+<a name="model"></a>
+
+<img src="docs/assets/model/model.drawio.png alt="Struktura modelu"></img>
+
+<img src="docs/assets/model/model.drawio.svg alt="Struktura modelu"></img>
+
 
 ## 4. Zrzuty ekranu
 

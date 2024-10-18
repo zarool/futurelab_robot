@@ -17,7 +17,7 @@ class Communicator():
         return self.driver.get_positions()
     
     def set_selected_port(self, port, device):
-        return self.driver.get_selected_port(port, device)
+        return self.driver.set_selected_port(port, device)
 
     def connect_esp32(self):
         self.driver.connect_esp32()
