@@ -15,7 +15,7 @@ class Communicator():
 
     def get_positions(self):
         return self.driver.get_positions()
-    
+
     def set_selected_port(self, port, device):
         return self.driver.set_selected_port(port, device)
 
@@ -27,10 +27,10 @@ class Communicator():
 
     def connect_arduino(self):
         self.driver.connect_arduino()
-    
+
     def move(self, id, pos):
         self.driver.move(id, pos)
-    
+
     def update_robot(self):
         pass
 

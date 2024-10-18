@@ -46,21 +46,21 @@ class App:
         self.entry_y = 0
         self.entry_z = 0
 
-        self.tree = 0
-        self.combo = 0
+        self.tree = None
+
         self.frames = {}
 
         self.sliders = 0
         self.table = 0
         self.label_coord = 0
-
         self.status_torque = 0
 
-        self.btn_refresh = 0
+        self.combo = None
+        self.btn_refresh = None
         self.btn_conn = ctk.StringVar()
         self.com_ports = self.communicator.get_com_ports()
 
-        self.combo_arduino = 0
+        self.combo_arduino = None
         self.btn_refresh_arduino = 0
         self.btn_conn_arduino = ctk.StringVar()
         self.com_ports_arduino = self.communicator.get_com_ports()
@@ -142,16 +142,16 @@ class App:
         canvas.draw()
 
         btn_compute = ui.button(main_frame,"Oblicz", None, self.communicator.update_robot, 3, 0, 50, 10,'w', None)
-        btn_move = ui.button(main_frame, "Wykonaj", None, self.communicator.test, 2, 2, 10, 10, None, None)
-        btn_transport = ui.button(main_frame, "Transport", None, self.communicator.transport_mode, 0, 3, 10, 10, None, None)
+        btn_move = ui.button(main_frame, "Wykonaj", None, self.communicator.test, 2, 2, 10, 10)
+        btn_transport = ui.button(main_frame, "Transport", None, self.communicator.transport_mode, 0, 3, 10, 10)
 
         self.label_coord = ctk.CTkLabel(main_frame, text="End-Effector Coordinates:\nX: 0.00, Y: 0.00, Z: 0.00")
         self.label_coord.grid(row=4, column=0, columnspan=2, padx=50, pady=10, sticky="w")
-        
+
         ########################
         ########## CAMERA SECTION
 
-        button_showcase = ui.button(main_frame, "Showcase", None, self.communicator.showcase_camera, 3, 4, 10, 10, None, None)
+        button_showcase = ui.button(main_frame, "Showcase", None, self.communicator.showcase_camera, 3, 4, 10, 10)
 
         ########################
         ########## CONNECTION SECTION
@@ -179,7 +179,7 @@ class App:
 
         self.communicator.start_receive_data_thread(self.update_display)
         self.refresh_connection_esp32()
-        
+
         self.label_coord.configure(text=f"End-Effector Coordinates:\nX: {self.plot.rx:.2f}, Y: {self.plot.ry:.2f}, Z: {self.plot.rz:.2f}")
 
         self.root.after(100, self.update_table)
@@ -204,7 +204,7 @@ class App:
         selected_port = self.combo.get()
         print(f"Selected COM port: {selected_port}")
         self.communicator.set_selected_port(selected_port, "esp32")
-    
+
     def refresh_com_ports(self):
         self.com_ports = self.communicator.get_com_ports()
         print(f"Available COM ports: {self.com_ports}")  # Dodaj logi debugujące
@@ -219,7 +219,7 @@ class App:
         else:
             # com_ports_var.set(com_ports[0] if com_ports else '')
             self.combo.configure(self.com_ports)
-    
+
     def refresh_connection_esp32(self):
         connection_status = self.communicator.connect_esp32()
         if connection_status == 1:
