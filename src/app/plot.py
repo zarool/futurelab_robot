@@ -2,8 +2,7 @@ import math
 import numpy as np
 import matplotlib.pyplot as plt
 
-from robot.matrics import *
-#compute_end_pos, T1, T2, T3, T4, T5
+from robot.matrices import *
 
 class Plot:
     def __init__(self) -> None:
@@ -12,10 +11,10 @@ class Plot:
         self.rx = 0
         self.ry = 0
         self.rz = 0
-        
+
         self.plot_robot(math.pi, -math.pi/2, 0, 0)
 
-        
+
     def plot_robot(self, theta1, theta2, theta3, theta4):
         a3 = 152.794
         a4 = 157.76
@@ -54,6 +53,3 @@ class Plot:
         self.ax.set_zlabel('Z')
         self.ax.set_title('3D Robot Arm')
         self.ax.legend()
-
-
-

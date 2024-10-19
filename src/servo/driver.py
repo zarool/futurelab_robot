@@ -27,14 +27,14 @@ class Driver:
         self.esp32_port = ""
         self.ser_arduino = None
         self.ser_esp32 = None
-        
+
     def get_com_ports(self):
         ports = list(serial.tools.list_ports.comports())
         return [port.device for port in ports]
-    
+
     def get_positions(self):
         return self.positions
-    
+
     def move_camera(self, id_camera, position):
         id_camera = int(id_camera)
         position = int(position)
@@ -96,6 +96,21 @@ class Driver:
         self.send_command(f"{id},{position},{speed},{acc}")
         self.positions[id - 1] = position
 
+    def move_to_position(self, pos1, pos2, pos3, pos4, off_1, off_2, off_3, off_4):
+        try:
+            if(pos3 < 150 or pos3 > 2000):
+                raise ValueError("Ruch poza zakresem")
+            if(pos4 < 1024):
+                raise ValueError("Ruch poza zakresem")
+                self.move(1, (pos1 + off_1))
+                self.move(2, (pos2 + off_2))
+                self.move(3, (pos3 - off_3))
+                self.move(4, (pos4 - off_4))
+                self.move(5, (4096 - pos4 + off_4))
+
+        except ValueError as e:
+            print(f"Błąd konwersji współrzędnych lub punkt poza zasięgiem: {e}")
+
     def set_selected_port(self, port, device):
         self.selected_port = port
         if device == "arduino":
@@ -105,7 +120,10 @@ class Driver:
 
     def get_selected_port(self):
         return self.selected_port
-    
+
+    def get_data(self):
+        return id, voltage, current, temperature, self.positions, load
+
     def receive_data(self, serial_connection, callback):
         buffer = ""
         while self.running:
@@ -153,7 +171,3 @@ class Driver:
 #     com_ports = get_com_ports()
 #     com_ports_var.set(com_ports)
 #     combobox['values'] = com_ports
-
-
-
-

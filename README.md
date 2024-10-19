@@ -33,7 +33,7 @@ Proces wgrania kluczy znajduje się w [tym poradniku](/docs/connect-to-jetson-ss
 mkdir futurelab_robot && cd futurelab_robot
 git init
 git remote add origin git@github.com:zarool/futurelab_robot.git # konieczne jest przygotowanie klucza SSH do GitHub
-git pull --rebase origin main 
+git pull --rebase origin main
 ```
 W celu wgrania nowych zmian należy wrzucić projekt na nowy branch
 ```shell
@@ -75,13 +75,13 @@ python3 src/main.py
 
 <a name="dependencies"></a>
 
-| Nazwa         | Wersja           | 
+| Nazwa         | Wersja           |
 |---------------|:----------------:|
 | JetPack       | 6.0 [L4T 36.3.0] |
 | CUDA          | 12.2.140         |
 | cuDNN         | 8.9.4.25         |
-| CUDA GPU Arch | 8.7              | 
-| OpenCV        | 4.9.0            | 
+| CUDA GPU Arch | 8.7              |
+| OpenCV        | 4.9.0            |
 | GStreamer     | 1.20.3           |
 | Python        | 3.10.12          |
 
@@ -93,6 +93,8 @@ python3 src/main.py
 <a name="model"></a>
 
 <img src="docs/assets/model/model.drawio.png" alt="Struktura modelu"></img>
+
+Dokładny opis klas oraz ich funkcji został opisany w [dokumentacji](docs/documentation.md)
 
 ## 4. Zrzuty ekranu
 

@@ -1,6 +1,6 @@
 import math
 import numpy as np
-from robot.matrics import compute_end_pos
+from robot.matrices import compute_end_pos
 
 
 def inverse_kinematics(x, y, z, a2=152.794, a3=157.76, a4=90):
@@ -25,7 +25,7 @@ def inverse_kinematics(x, y, z, a2=152.794, a3=157.76, a4=90):
 
     # Calculate theta3 using the law of cosines
     cos_theta3 = (nx**2 + ny**2 - a2**2 - a3**2) / (2 * a2 * a3)
-    
+
     # Check if the value is within the valid range for arccos
     if cos_theta3 < -1 or cos_theta3 > 1:
         raise ValueError("Target is out of reach")
@@ -45,7 +45,7 @@ def inverse_kinematics(x, y, z, a2=152.794, a3=157.76, a4=90):
     #     raise ValueError("Target is out of reach")
     print("theta2:", theta2)
 
-    theta4 = -(theta2 + theta3 + np.pi/2)  
+    theta4 = -(theta2 + theta3 + np.pi/2)
 
     print("theta4:", theta4)
     theta1_1 = theta1 + 3.141592653589793
@@ -94,6 +94,6 @@ def inverse_kinematics(x, y, z, a2=152.794, a3=157.76, a4=90):
     print(pos2)
     print(pos3)
     print(pos4)
-    
+
 
     return theta1, theta2, theta3, theta4, pos1, pos2, pos3, pos4, valid_position

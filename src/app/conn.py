@@ -16,6 +16,9 @@ class Communicator():
     def get_positions(self):
         return self.driver.get_positions()
 
+    def get_data(self):
+        return self.driver.get_data()
+
     def set_selected_port(self, port, device):
         return self.driver.set_selected_port(port, device)
 
@@ -31,8 +34,8 @@ class Communicator():
     def move(self, id, pos):
         self.driver.move(id, pos)
 
-    def update_robot(self):
-        pass
+    def move_to_position(self, pos1, pos2, pos3, pos4, off_1, off_2, off_3, off_4):
+        self.driver.move_to_position(pos1, pos2, pos3, pos4, off_1, off_2, off_3, off_4)
 
     def test(self, id_move_s, position_move_s):
         print("czesc")
