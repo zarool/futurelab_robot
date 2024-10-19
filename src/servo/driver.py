@@ -4,11 +4,6 @@ import threading
 import time
 
 # Inicjalizacja zmiennych globalnych
-id = [1, 2, 3, 4, 5, 6]
-voltage = [1.2, 1.3, 1.4, 1.5, 1.6, 1.7]
-current = [2.3, 2.4, 2.5, 2.6, 2.7, 3]
-temperature = [36.0, 37.0, 38.0, 39.0, 40.0, 40]
-load = [1.5, 1.6, 1.7, 1.8, 1.9, 2]
 speed = 150
 acc = 150
 arduino_baudrate = 9600
@@ -19,7 +14,13 @@ class Driver:
     def __init__(self) -> None:
         self.running = True
 
+        self.id = [1, 2, 3, 4, 5, 6]
+        self.voltage = [1.2, 1.3, 1.4, 1.5, 1.6, 1.7]
+        self.current = [2.3, 2.4, 2.5, 2.6, 2.7, 3]
+        self.temperature = [36.0, 37.0, 38.0, 39.0, 40.0, 40]
         self.positions = [120, 130, 140, 150, 160, 200]
+        self.load = [1.5, 1.6, 1.7, 1.8, 1.9, 2]
+
 
         self.connection_status = None
         self.selected_port = ""
@@ -27,13 +28,6 @@ class Driver:
         self.esp32_port = ""
         self.ser_arduino = None
         self.ser_esp32 = None
-
-    def get_com_ports(self):
-        ports = list(serial.tools.list_ports.comports())
-        return [port.device for port in ports]
-
-    def get_positions(self):
-        return self.positions
 
     def move_camera(self, id_camera, position):
         id_camera = int(id_camera)
@@ -118,11 +112,6 @@ class Driver:
         elif device == "esp32":
             self.esp32_port = port
 
-    def get_selected_port(self):
-        return self.selected_port
-
-    def get_data(self):
-        return id, voltage, current, temperature, self.positions, load
 
     def receive_data(self, serial_connection, callback):
         buffer = ""
@@ -165,7 +154,18 @@ class Driver:
     def stop_receiving(self):
         self.running = False
 
+    def get_com_ports(self):
+        ports = list(serial.tools.list_ports.comports())
+        return [port.device for port in ports]
 
+    def get_positions(self):
+        return self.positions
+
+    def get_selected_port(self):
+        return self.selected_port
+
+    def get_data(self):
+        return self.id, self.voltage, self.current, self.temperature, self.positions, self.load
 
 # def refresh_com_ports(com_ports_var, combobox):
 #     com_ports = get_com_ports()

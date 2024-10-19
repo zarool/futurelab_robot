@@ -46,7 +46,7 @@ class button:
         self.color = new_color
         self.button.configure(fg_color=self.color)
 
-class text_label():
+class text_label:
     def __init__(self, window, text, font, font_size, row, column, padx, pady, sticky):
         self.window = window
         self.text = text
@@ -75,7 +75,7 @@ class text_label():
     def configure(self, text):
         self.label.configure(text=text)
 
-class text_gap():
+class text_gap:
     def __init__(self, window, width, row, column, padx, pady, sticky):
         self.window = window
         self.width = width
@@ -110,7 +110,7 @@ class text_gap():
             print("Bład konwersji")
         return number
 
-class dropdown_list():
+class dropdown_list:
     def __init__(self, window, variable, sequence, command, row, column, padx, pady):
         self.window = window
         self.variable = variable

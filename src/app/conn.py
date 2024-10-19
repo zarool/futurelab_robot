@@ -7,9 +7,6 @@ class Communicator():
         self.toggle = False
         self.driver = Driver()
 
-    def start_receive_data_thread(self, callback):
-        self.driver.start_receive_data_thread(callback)
-
     def get_com_ports(self):
         return self.driver.get_com_ports()
 
@@ -22,20 +19,29 @@ class Communicator():
     def set_selected_port(self, port, device):
         return self.driver.set_selected_port(port, device)
 
-    def connect_esp32(self):
-        self.driver.connect_esp32()
-
     def set_selected_port_arduino(self):
         pass
 
+
+
+    def start_receive_data_thread(self, callback):
+        self.driver.start_receive_data_thread(callback)
+
+    def connect_esp32(self):
+        self.driver.connect_esp32()
+
     def connect_arduino(self):
         self.driver.connect_arduino()
+
+
 
     def move(self, id, pos):
         self.driver.move(id, pos)
 
     def move_to_position(self, pos1, pos2, pos3, pos4, off_1, off_2, off_3, off_4):
         self.driver.move_to_position(pos1, pos2, pos3, pos4, off_1, off_2, off_3, off_4)
+
+
 
     def test(self, id_move_s, position_move_s):
         print("czesc")
