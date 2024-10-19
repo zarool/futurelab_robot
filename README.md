@@ -99,3 +99,7 @@ Dokładny opis klas oraz ich funkcji został opisany w [dokumentacji](docs/docum
 ## 4. Zrzuty ekranu
 
 <a name="screenshot"></a>
+
+Podstawowa wersja GUI programu.
+
+<img src="docs/assets/screenshots/v0.0.1.png" alt="Alpha version" width=600></img>
