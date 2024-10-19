@@ -35,19 +35,19 @@ class Driver:
         self.send_command_camera(f"{id_camera},{position}")
 
     def send_command_camera(self, command):
-        if command and self.ser_esp32 is not None and self.ser_esp32.is_open:
+        if command and self.ser_arduino is not None and self.ser_arduino.is_open:
             try:
                 full_command = f"*{command}*"
-                self.ser_esp32.write(full_command.encode('utf-8') + b'\n')
+                self.ser_arduino.write(full_command.encode('utf-8') + b'\n')
                 print(f"Wysłano komendę: {full_command}")
             except serial.SerialException as e:
                 print(f"Błąd wysyłania komendy: {e}")
 
     def send_command(self, command):
-        if command and self.ser_arduino is not None and self.ser_arduino.is_open:
+        if command and self.ser_esp32 is not None and self.ser_esp32.is_open:
             try:
                 full_command = f"({command})"
-                self.ser_arduino.write(full_command.encode('utf-8') + b'\n')
+                self.ser_esp32.write(full_command.encode('utf-8') + b'\n')
                 print(f"Wysłano komendę: {full_command}")
             except serial.SerialException as e:
                 print(f"Błąd wysyłania komendy: {e}")

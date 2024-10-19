@@ -55,12 +55,12 @@ class App:
 
         ########################
         ########## GRID POSITIONS
-        # todo
+
 
         ########################
         ########## robot
 
-        self.entry_x = ui.text_gap(self.main_frame, 150, 0, 0, 25, 10 ,"e")
+        self.entry_x = ui.text_gap(self.main_frame, 150, 1, 0, 25, 10 ,"e")
         self.entry_y = ui.text_gap(self.main_frame, 150, 1, 0, 25, 10 ,"e")
         self.entry_z = ui.text_gap(self.main_frame, 150, 2, 0, 25, 10 ,"e")
 
@@ -94,7 +94,7 @@ class App:
 
         ########################
         ########## data
-        self.table = ui.table(self.data_frame, COLUMNS_HEADER, "headings", COLUMNS_HEADER, 160, 6, 16, 20, 20, 'nsew')
+        self.table = ui.table(self.data_frame, COLUMNS_TEXT, "headings", COLUMNS_HEADER, 160, 6, 16, 20, 20, 'nsew')
 
     def gui(self):
         "Allocate buttons and objects on window"
