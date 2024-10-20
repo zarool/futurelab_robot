@@ -21,7 +21,6 @@ class Driver:
         self.positions = [120, 130, 140, 150, 160, 200]
         self.load = [1.5, 1.6, 1.7, 1.8, 1.9, 2]
 
-
         self.connection_status = None
         self.selected_port = ""
         self.arduino_port = ""
