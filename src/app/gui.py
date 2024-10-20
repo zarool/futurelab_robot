@@ -60,12 +60,12 @@ class App:
         ########################
         ########## robot
 
-        self.entry_x = ui.text_gap(self.main_frame, 150, 1, 0, 25, 10 ,"e")
+        self.entry_x = ui.text_gap(self.main_frame, 150, 0, 0, 25, 10 ,"e")
         self.entry_y = ui.text_gap(self.main_frame, 150, 1, 0, 25, 10 ,"e")
         self.entry_z = ui.text_gap(self.main_frame, 150, 2, 0, 25, 10 ,"e")
 
-        self.label_coord = ctk.CTkLabel(self.main_frame, text="End-Effector Coordinates:\nX: 0.00, Y: 0.00, Z: 0.00")
-        self.label_coord.grid(row=4, column=0, padx=10, pady=0, sticky="nsew")
+        self.label_coord = ctk.CTkLabel(self.main_frame, text="End-Effector Coordinates:\nX: 0.00 \nY: 0.00 \nZ: 0.00")
+        self.label_coord.grid(row=3, column=0, rowspan=2, padx=10, pady=0, sticky="nsew")
 
         self.canvas = FigureCanvasTkAgg(self.plot.fig, master=self.main_frame)
         self.canvas.get_tk_widget().grid(column=1, row=0, rowspan=25)
@@ -89,8 +89,8 @@ class App:
         ########## positions
         self.positions = self.communicator.get_positions()
 
-        self.id_move_s = ui.text_gap(self.main_frame, 200, 9, 0, 25, 10 ,"w")
-        self.position_move_s = ui.text_gap(self.main_frame, 200, 11, 0, 25, 10 ,"w")
+        # self.id_move_s = ui.text_gap(self.main_frame, 200, 9, 0, 25, 10 ,"w")
+        # self.position_move_s = ui.text_gap(self.main_frame, 200, 11, 0, 25, 10 ,"w")
 
         ########################
         ########## data
@@ -147,12 +147,12 @@ class App:
         ui.text_label(self.main_frame, "X:", "Helvetica", 12, 0, 0, 10, 10, "w")
         ui.text_label(self.main_frame, "Y:", "Helvetica", 12, 1, 0, 10, 10, "w")
         ui.text_label(self.main_frame, "Z:", "Helvetica", 12, 2, 0, 10, 10, "w")
-        ui.text_label(self.main_frame,"ID","Helvetica", 12, 8, 0, 10, 0, None)
-        ui.text_label(self.main_frame,"Position","Helvetica", 12, 10, 0, 10, 0, None)
+        # ui.text_label(self.main_frame,"ID","Helvetica", 12, 8, 0, 10, 0, None)
+        # ui.text_label(self.main_frame,"Position","Helvetica", 12, 10, 0, 10, 0, None)
 
         btn_compute = ui.button(self.main_frame,"Oblicz", None, self.update_robot, 5, 0, 10, 10)
-        btn_move = ui.button(self.main_frame, "Wykonaj", None, lambda: self.communicator.test(self.id_move_s, self.position_move_s), 6, 0, 10, 10)
-        btn_transport = ui.button(self.main_frame, "Transport", None, self.communicator.transport_mode, 7, 0, 10, 10)
+        # btn_move = ui.button(self.main_frame, "Wykonaj", None, lambda: self.communicator.test(self.id_move_s, self.position_move_s), 6, 0, 10, 10)
+        btn_transport = ui.button(self.main_frame, "Transport", None, self.communicator.transport_mode, 6, 0, 10, 10)
 
         ########################
         ########## CAMERA SECTION
@@ -197,7 +197,7 @@ class App:
         self.plot.plot_robot(self.robot, theta1, theta2, theta3, theta4)
         self.communicator.move_to_position(pos1, pos2, pos3, pos4, self.offset_1, self.offset_2, self.offset_3, self.offset_4)
 
-        self.label_coord.configure(text=f"End-Effector Coordinates:\nX: {self.robot.rx:.2f}, Y: {self.robot.ry:.2f}, Z: {self.robot.rz:.2f}")
+        self.label_coord.configure(text=f"End-Effector Coordinates:\nX: {self.robot.rx:.2f} \nY: {self.robot.ry:.2f} \nZ: {self.robot.rz:.2f}")
         self.update_table()
         self.plot.fig.canvas.draw_idle()
 

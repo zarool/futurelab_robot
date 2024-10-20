@@ -23,13 +23,15 @@ class Plot:
         self.ax.plot(points[:, 0], points[:, 1], points[:, 2], 'bo-', label='Links')
         self.ax.plot(robot.rx, robot.ry, robot.rz, 'ro', label='End-Effector')
 
-        self.ax.set_xlim(-200, 200)
-        self.ax.set_ylim(-200, 200)
-        self.ax.set_zlim(-200, 200)
+        self.ax.set_xlim(-300, 300)
+        self.ax.set_ylim(-300, 300)
+        self.ax.set_zlim(-30, 400)
 
         self.ax.set_xlabel('X')
         self.ax.set_ylabel('Y')
         self.ax.set_zlabel('Z')
+
+        plt.gca().invert_zaxis()
 
         self.ax.set_title('3D Robot Arm')
         self.ax.legend()
