@@ -20,9 +20,43 @@
 ## 1. App
 <a name="app"></a>
 
+Główna część programu, zawiera GUI oraz obiekty służące do przeliczania pozycji robota oraz wizualizacji jego ustawienia. 
+
+Docelowo interfejs użytkownika (widok z kamer, panel sterowania) wyświetlany będzie po stronie usera, natomiast wszystkie obliczenia wykonywane będą po stronie Jetsona.
+
 
 ### 1.1 App module
 <a name="app-module"></a>
+
+Importuje biblioteki tk oraz ctk w celu utworzenia interfejsu - docelowo znajdzie się w osobnym module do uruchomienia po stronie usera.
+
+- `gui`
+
+- `run`
+
+- `update_robot`
+
+- `refresh_connection`
+
+	- `refresh_connection_esp32`
+
+	- `refresh_connection_arduino`
+
+- `update_table`
+
+	- `update_display`
+
+- `on_combobox_select`
+
+- `refresh_com_ports`
+
+- `on_combobox_select_arduino`
+
+- `refresh_arduino_ports`
+
+- `thetas_to_0`
+
+- `event_handler`
 
 
 ### 1.2 UI
