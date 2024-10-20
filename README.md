@@ -16,7 +16,6 @@
 4. [Zrzuty ekranu](#screenshots)
 
 ## 1. Uruchomienie
-
 <a name="startup"></a>
 
 Pierwszym krokiem jest przygotowanie kluczy znajdujących się w folderze [`utils/ssh/`](/utils/ssh).
@@ -24,7 +23,6 @@ Proces wgrania kluczy znajduje się w [tym poradniku](/docs/connect-to-jetson-ss
 
 
 ### 1.1 Pobranie plików na maszynie lokalnej
-
 <a name="startup1"></a>
 
 - Opcja pierwsza, jeżeli planujemy późniejsze modyfikowanie kodu i wgrywanie na repozytorium:
@@ -51,7 +49,6 @@ git clone https://github.com/zarool/futurelab_robot
 ```
 
 ### 1.2 Wgranie plików do Jetsona
-
 <a name="startup2"></a>
 
 ```shell
@@ -63,7 +60,6 @@ utils/copy.sh ~/.ssh/jetson
 ```
 
 ### 1.3 Uruchomienie programu na Jetsonie
-
 <a name="startup3"></a>
 
 W katalogu programu `futurelab_robot`
@@ -74,7 +70,6 @@ python3 src/main.py
 
 
 ## 2. Użyte biblioteki
-
 <a name="dependencies"></a>
 
 | Nazwa         | Wersja             |
@@ -91,15 +86,13 @@ python3 src/main.py
 >Do sprawdzenia aktualnych wersji bibliotek i firmware'u w terminalu wpisz `jetson_release`
 
 ## 3. Struktura programu
-
 <a name="model"></a>
 
-<img src="docs/assets/model/model.drawio.svg" alt="Struktura modelu"></img>
+<img src="docs/assets/model/model.drawio.jpg" alt="Struktura modelu"></img>
 
 Dokładny opis klas oraz ich funkcji został opisany w [dokumentacji](docs/documentation.md)
 
 ## 4. Zrzuty ekranu
-
 <a name="screenshot"></a>
 
 Podstawowa wersja GUI programu.
