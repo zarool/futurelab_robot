@@ -2,15 +2,17 @@ import customtkinter as ctk
 import tkinter as tk
 from tkinter import ttk
 
+import threading
+
 import math
 import numpy as np
-import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 import app.ui as ui
 from app.plot import Plot
 from app.conn import Communicator
 from robot.robot import Robot
+from camera.capture import Camera
 
 # COLUMNS_TEXT PROB NOT NEEDED
 COLUMNS_TEXT = ("Id", "Voltage", "Current", "Temperature", "Position", "Load")
@@ -44,8 +46,8 @@ class App:
         self.communicator = Communicator()
         self.plot = Plot()
         self.robot = Robot()
-
-        self.plot.plot_robot(self.robot, math.pi, -math.pi/2, 0, 0)
+        self.camera = Camera(0)
+        self.camera.start()
 
         ########################
         ########## GUI VARIABLES
@@ -56,9 +58,21 @@ class App:
         ########################
         ########## GRID POSITIONS
 
+        ########################
+        ########## camera
+
+        self.camera0 = ctk.CTkLabel(self.main_frame, text="")
+        self.camera0.grid(column=1, row=11)
+
+        # self.camera0 = ctk.CTkCanvas(self.root, width=640, height=480).grid(column=1, row=11)
+        # self.camera0.create_image(0, 0, image=self.camera.get_image())
+
+        # self.camera1 = tk.Label(self.root)
 
         ########################
         ########## robot
+
+        self.plot.plot_robot(self.robot, math.pi, -math.pi/2, 0, 0)
 
         self.entry_x = ui.text_gap(self.main_frame, 150, 0, 0, 25, 10 ,"e")
         self.entry_y = ui.text_gap(self.main_frame, 150, 1, 0, 25, 10 ,"e")
@@ -68,7 +82,7 @@ class App:
         self.label_coord.grid(row=3, column=0, rowspan=2, padx=10, pady=0, sticky="nsew")
 
         self.canvas = FigureCanvasTkAgg(self.plot.fig, master=self.main_frame)
-        self.canvas.get_tk_widget().grid(column=1, row=0, rowspan=25)
+        self.canvas.get_tk_widget().grid(column=1, row=0, rowspan=10)
 
         ########################
         ########## connection
@@ -185,8 +199,27 @@ class App:
         self.refresh_connections()
 
         self.event_handler()
-        self.root.after(100, self.update_table)
+
+        self.read_camera()
+
+        self.root.after(1, self.get_threads)
+        # self.root.after(1, self.read_camera)
+        # self.root.after(100, self.update_table)
         self.root.mainloop()
+
+###################################
+####### camera
+    def read_camera(self):
+        self.camera.start()
+
+        frame_ctk = ctk.CTkImage(self.camera.get_image(), size=(200, 200))
+        self.camera0.configure(image=frame_ctk)
+
+        self.camera0.after(1, self.read_camera)
+
+    def get_threads(self):
+        for thread in threading.enumerate():
+            print(thread.name)
 
     ###################################
     ####### robot

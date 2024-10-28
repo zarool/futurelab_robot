@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+from PIL import Image, ImageTk
 
 from camera.processing.device import Devices
 from camera.processing.utils import Utils
@@ -14,25 +15,23 @@ CAMERA_MODES = [
     [1280, 720, 120]
 ]
 
-
-class Maszt:
-    def __init__(self, cam_disp, contour, detect, info, flip, current, mode, display_w, display_h,
-                 object_w, object_l):
+class Camera:
+    def __init__(self, mode):
         # system arguments default values
-        self.cam_disp = cam_disp
-        self.contour = contour
-        self.detect = detect
-        self.info = info
-        self.current_img = current
+        self.cam_disp = 1#cam_disp
+        self.contour = 0#contour
+        self.detect = 1#detect
+        self.info = 1#info
+        self.current_img = 0#current
 
         # 0 - default, 2 - turn 180 [deg]
-        self.FLIP = flip
+        self.FLIP = 0#flip
         # BOOL to don't open camera twice at beginning of program (used for changing exposure in set_exposure())
         self.RUN = False
 
         # display window size
-        self.display_w = int(display_w)
-        self.display_h = int(display_h)
+        self.display_w = CAMERA_MODES[mode][0] #int(display_w)
+        self.display_h = CAMERA_MODES[mode][1] #int(display_h)
 
         # CAPTURE MODE
         # all modes in main configuration script file
@@ -41,8 +40,8 @@ class Maszt:
         self.FPS = CAMERA_MODES[mode][2]
 
         # OBJECT TO DETECT
-        self.OBJECT_W = object_w  # [cm]
-        self.OBJECT_L = object_l  # [cm]
+        self.OBJECT_W = 10#object_w  # [cm]
+        self.OBJECT_L = 10#object_l  # [cm]
 
         self.detected_object = [0, 0, 0, 0, 0, 0]
 
@@ -86,7 +85,6 @@ class Maszt:
 
     def start(self):
         self.image = None
-
         # 0
         # capturing video frame
         if self.camera:
@@ -102,7 +100,6 @@ class Maszt:
                 self.image = cv2.resize(img, (self.display_w, self.display_h))
             except IndexError:
                 print('An error occurred while loading images.')
-
         # ===============
 
         # 1
@@ -130,6 +127,10 @@ class Maszt:
         # 4
         # todo returning picked image coordinates and color
         self.detected_object = self.utils.pick_object(self.image, final_contours)
+
+    def get_image(self):
+        img = Image.fromarray(cv2.cvtColor(self.image, cv2.COLOR_BGR2RGB))
+        return img
 
     def get_current_img(self):
         return self.current_img

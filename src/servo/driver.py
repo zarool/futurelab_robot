@@ -145,10 +145,10 @@ class Driver:
 
     def start_receive_data_thread(self, callback):
         self.running = True
-        arduino_thread = threading.Thread(target=lambda: self.receive_data(self.ser_arduino, callback), daemon=True)
-        esp32_thread = threading.Thread(target=lambda: self.receive_data(self.ser_esp32, callback), daemon=True)
-        arduino_thread.start()
-        esp32_thread.start()
+        # arduino_thread = threading.Thread(target=lambda: self.receive_data(self.ser_arduino, callback), daemon=True)
+        # esp32_thread = threading.Thread(target=lambda: self.receive_data(self.ser_esp32, callback), daemon=True)
+        # arduino_thread.start()
+        # esp32_thread.start()
 
     def stop_receiving(self):
         self.running = False
