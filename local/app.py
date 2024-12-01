@@ -22,13 +22,13 @@ def create_ssh_client(hostname, port, username, password):
 
 
 # Function to fetch the captured frame from remote machine with retry logic
-def fetch_frame_from_remote_with_retry(ssh_client, remote_path0, local_path0, remote_path1, local_path1, max_retries=5):
+def fetch_frame_from_remote_with_retry(ssh_client, frames, max_retries=5):
     attempt = 0
     while attempt < max_retries:
         try:
             scp = SCPClient(ssh_client.get_transport())
-            scp.get(remote_path0, local_path0)
-            scp.get(remote_path1, local_path1)
+            for frame in frames:
+                scp.get(f'/tmp/{frame}', f'{frame}')
             scp.close()
             return True
         except Exception as e:
@@ -37,30 +37,26 @@ def fetch_frame_from_remote_with_retry(ssh_client, remote_path0, local_path0, re
             time.sleep(2)  # Wait for 2 seconds before retrying
     return False
 
-
-
 # Function to display the video stream from the received frames
-def display_video_stream(ssh_client, remote_path0, local_path0, remote_path1, local_path1):
+def display_video_stream(ssh_client, frames):
     while True:
         # Fetch the latest frame from the remote machine with retries
-        if fetch_frame_from_remote_with_retry(ssh_client, remote_path0, local_path0, remote_path1, local_path1):
+        if fetch_frame_from_remote_with_retry(ssh_client, frames):
+            for frame_name in frames:
+                with open(frame_name, 'rb') as im:
+                    im.seek(-2, 2)
+                    if im.read() == b'\xff\xd9':
+                        print('Image OK :', frame_name)
+                    else:
+                        # fix image
+                        img = cv2.imread(frame_name)
+                        cv2.imwrite(frame_name, img)
+                        print('FIXED corrupted image :', frame_name)
 
-            # with open(local_path, 'rb') as im:
-            #     im.seek(-2, 2)
-            #     if im.read() == b'\xff\xd9':
-            #         print('Image OK :', local_path)
-            #     else:
-            #         # fix image
-            #         img = cv2.imread(local_path)
-            #         cv2.imwrite(local_path, img)
-            #         print('FIXED corrupted image :', local_path)
+                frame = cv2.imread(frame_name)
 
-            frame0 = cv2.imread(local_path0)
-            frame1 = cv2.imread(local_path1)
-
-            if frame0 is not None and frame1 is not None:
-                cv2.imshow("CSI CAMERA 0", frame0)
-                cv2.imshow("CSI CAMERA 1", frame1)
+                if frame is not None:
+                    cv2.imshow(f"{frame_name}", frame)
 
             time.sleep(0.5)
 
@@ -76,17 +72,14 @@ hostname = '192.168.55.1'  # Remote machine's IP address
 port = 22  # SSH port (default is 22)
 username = 'nvidia'  # Username for remote machine
 password = 'nvidia'  # Password for remote machine
-remote_path0 = '/tmp/captured_frame0.jpg'  # Path to captured frame on remote machine
-remote_path1 = '/tmp/captured_frame1.jpg'
-local_path0 = 'captured_frame0.jpg'  # Local path to store the received frame temporarily
-local_path1 = 'captured_frame1.jpg'  # Local path to store the received frame temporarily
+names = ['captured_frame0.jpg', 'captured_frame1.jpg']
 
 if __name__ == "__main__":
     # Create SSH client to connect to the remote machine
     ssh_client = create_ssh_client(hostname, port, username, password)
 
     # Start displaying the video stream
-    display_video_stream(ssh_client, remote_path0, local_path0, remote_path1, local_path1)
+    display_video_stream(ssh_client, names)
 
     # Close the SSH connection when done
     ssh_client.close()
