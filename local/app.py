@@ -2,11 +2,14 @@ import cv2
 import time
 import paramiko
 from scp import SCPClient
-from skimage import io
-import numpy
-from io import StringIO
-import PIL.Image
-import os
+
+
+# Jetson data
+hostname = '192.168.55.1'  # Remote machine's IP address
+port = 22  # SSH port (default is 22)
+username = 'nvidia'  # Username for remote machine
+password = 'nvidia'  # Password for remote machine
+names = ['captured_frame0.jpg', 'captured_frame1.jpg']
 
 
 # Function to create SSH connection to remote machine
@@ -43,6 +46,8 @@ def display_video_stream(ssh_client, frames):
         # Fetch the latest frame from the remote machine with retries
         if fetch_frame_from_remote_with_retry(ssh_client, frames):
             for frame_name in frames:
+
+                # Check for errors with "premature JPEG file"
                 with open(frame_name, 'rb') as im:
                     im.seek(-2, 2)
                     if im.read() == b'\xff\xd9':
@@ -53,11 +58,12 @@ def display_video_stream(ssh_client, frames):
                         cv2.imwrite(frame_name, img)
                         print('FIXED corrupted image :', frame_name)
 
+                # Load image and show image
                 frame = cv2.imread(frame_name)
-
                 if frame is not None:
                     cv2.imshow(f"{frame_name}", frame)
 
+            # Delay to not break program
             time.sleep(0.5)
 
         # Break the loop if 'q' is pressed
@@ -65,14 +71,6 @@ def display_video_stream(ssh_client, frames):
             break
 
     cv2.destroyAllWindows()
-
-
-# Local machine info
-hostname = '192.168.55.1'  # Remote machine's IP address
-port = 22  # SSH port (default is 22)
-username = 'nvidia'  # Username for remote machine
-password = 'nvidia'  # Password for remote machine
-names = ['captured_frame0.jpg', 'captured_frame1.jpg']
 
 if __name__ == "__main__":
     # Create SSH client to connect to the remote machine
