@@ -28,10 +28,12 @@ class Driver:
         self.ser_arduino = None
         self.ser_esp32 = None
 
-    def move_camera(self, id_camera, position):
+    def move_camera(self, id_camera, target_position, step_delay, step_size):
         id_camera = int(id_camera)
-        position = int(position)
-        self.send_command_camera(f"{id_camera},{position}")
+        target_position = int(target_position)
+        step_delay = float(step_delay)
+        step_size = int(step_size)
+        self.send_command_camera(f"{id_camera},{target_position},{step_delay},{step_size}")
 
     def send_command_camera(self, command):
         if command and self.ser_arduino is not None and self.ser_arduino.is_open:
