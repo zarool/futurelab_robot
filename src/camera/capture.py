@@ -2,6 +2,9 @@ import cv2
 import numpy as np
 from PIL import Image, ImageTk
 
+import struct
+import redis
+
 from camera.processing.device import Devices
 from camera.processing.utils import Utils
 
@@ -14,6 +17,14 @@ CAMERA_MODES = [
     [1280, 720, 60],
     [1280, 720, 120]
 ]
+
+def fromRedis(r,n):
+   """Retrieve Numpy array from Redis key 'n'"""
+   encoded = r.get(n)
+   h, w = struct.unpack('>II',encoded[:8])
+   a = np.frombuffer(encoded, dtype=np.uint8, offset=8).reshape(h,w,3)
+   return a
+
 
 class Camera:
     def __init__(self, mode):
@@ -49,9 +60,11 @@ class Camera:
         self.devices = Devices(self.WIDTH, self.HEIGHT, self.display_w, self.display_h, self.FPS, self.FLIP)
 
         # OPENCV CAMERA OBJECT, VIDEO FROM THAT OBJECT, IMAGES TO READ FROM
-        self.camera, self.video, self.images = self.devices.prepare_devices(self.cam_disp)
+        # self.camera, self.video, self.images = self.devices.prepare_devices(self.cam_disp)
+
         self.image = None
         self.image_contour = None
+        self.redis = redis.Redis(host='localhost', port=6379, db=0)
 
         # UTILS
         self.utils = Utils()
@@ -84,23 +97,25 @@ class Camera:
             self.camera = self.devices.init_camera(exposure=exp_value)
 
     def start(self):
-        self.image = None
+        # self.image = None
         # 0
         # capturing video frame
-        if self.camera:
-            self.image = self.camera.read()
-            self.RUN = True
-        elif self.video:
-            _, self.image = self.video.read()
-            self.image = cv2.resize(self.image, (self.display_w, self.display_h))
-        else:
-            # capturing image
-            try:
-                img = self.images[self.current_img]
-                self.image = cv2.resize(img, (self.display_w, self.display_h))
-            except IndexError:
-                print('An error occurred while loading images.')
+        # if self.camera:
+        #     self.image = self.camera.read()
+        #     self.RUN = True
+        # elif self.video:
+        #     _, self.image = self.video.read()
+        #     self.image = cv2.resize(self.image, (self.display_w, self.display_h))
+        # else:
+        #     # capturing image
+        #     try:
+        #         img = self.images[self.current_img]
+        #         self.image = cv2.resize(img, (self.display_w, self.display_h))
+        #     except IndexError:
+        #         print('An error occurred while loading images.')
         # ===============
+
+        self.image = fromRedis(self.redis, 'image')
 
         # 1
         # image operations to get black and white contours
@@ -129,8 +144,9 @@ class Camera:
         self.detected_object = self.utils.pick_object(self.image, final_contours)
 
     def get_image(self):
-        img = Image.fromarray(cv2.cvtColor(self.image, cv2.COLOR_BGR2RGB))
-        return img
+        img0 = Image.fromarray(cv2.cvtColor(self.image, cv2.COLOR_BGR2RGB))
+        img1 = Image.fromarray(cv2.cvtColor(self.image, cv2.COLOR_BGR2RGB))
+        return img0, img1
 
     def get_current_img(self):
         return self.current_img

@@ -10,7 +10,7 @@ a5 = 90
 
 class Plot:
     def __init__(self) -> None:
-        self.fig = plt.figure(figsize=(4, 3), dpi=200)
+        self.fig = plt.figure(figsize=(10, 8), dpi=70)
         self.ax = self.fig.add_subplot(111, projection='3d')
 
     def plot_robot(self, robot, theta1, theta2, theta3, theta4):

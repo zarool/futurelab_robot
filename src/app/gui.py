@@ -27,7 +27,7 @@ class App:
 
         self.root = ctk.CTk()  # Użycie CTk zamiast Tk
         self.root.title("Robot Arm Inverse Kinematics")
-        self.root.geometry("1980x480+0+0")
+        # self.root.geometry("1980x1080+0+0")
 
         ########################
         ################ NAVBAR AND FRAMES
@@ -52,7 +52,8 @@ class App:
         ########################
         ########## GUI VARIABLES
         self.sliders = []
-        self.status_torque = ui.text_label(self.main_frame, "Status: " + str(self.communicator.toggle), "Helvetica", 12, 10, 3, 1, 10, "w")
+
+        self.status_torque = ui.text_label(self.main_frame, "Status: " + str(self.communicator.toggle), "Helvetica", 20, 7, 5, 1, 10, "")
         self.status_torque.configure("Status: " + str(self.communicator.toggle))
 
         ########################
@@ -61,14 +62,15 @@ class App:
         ########################
         ########## camera
 
+        self.frame_size = (300, 300)
+
         self.camera0 = ctk.CTkLabel(self.main_frame, text="")
-        self.camera0.grid(column=1, row=11)
+        self.camera0.grid(column=1, row=10, rowspan=5)
 
-        # self.camera0 = ctk.CTkCanvas(self.root, width=640, height=480).grid(column=1, row=11)
-        # self.camera0.create_image(0, 0, image=self.camera.get_image())
+        self.camera1 = ctk.CTkLabel(self.main_frame, text="")
+        self.camera1.grid(column=2, row=10, rowspan=5)
 
-        # self.camera1 = tk.Label(self.root)
-
+        
         ########################
         ########## robot
 
@@ -82,21 +84,21 @@ class App:
         self.label_coord.grid(row=3, column=0, rowspan=2, padx=10, pady=0, sticky="nsew")
 
         self.canvas = FigureCanvasTkAgg(self.plot.fig, master=self.main_frame)
-        self.canvas.get_tk_widget().grid(column=1, row=0, rowspan=10)
+        self.canvas.get_tk_widget().grid(column=1, row=0, rowspan=10, columnspan=2)
 
         ########################
         ########## connection
 
         self.com_ports = self.communicator.get_com_ports()
         self.btn_conn = ctk.StringVar()
-        self.btn_refresh = ui.button(self.main_frame, None, self.btn_conn, self.refresh_connection_esp32, 1, 2, 10, 10)
-        self.combo = ui.dropdown_list(self.main_frame, self.com_ports, "<<ComboboxSelected>>", self.on_combobox_select, 0, 2, 10, 10)
+        self.btn_refresh = ui.button(self.main_frame, None, self.btn_conn, self.refresh_connection_esp32, 1, 3, 10, 10)
+        self.combo = ui.dropdown_list(self.main_frame, self.com_ports, "<<ComboboxSelected>>", self.on_combobox_select, 0, 3, 10, 10)
         self.combo.configure(self.com_ports)
 
         self.com_ports_arduino = self.communicator.get_com_ports()
         self.btn_conn_arduino = ctk.StringVar()
-        self.btn_refresh_arduino = ui.button(self.main_frame, None, self.btn_conn_arduino, self.refresh_connection_arduino, 1, 4, 10, 10)
-        self.combo_arduino = ui.dropdown_list(self.main_frame, self.com_ports_arduino, "<<ComboboxSelected>>", self.on_combobox_select_arduino, 0, 4, 10, 10)
+        self.btn_refresh_arduino = ui.button(self.main_frame, None, self.btn_conn_arduino, self.refresh_connection_arduino, 1, 5, 10, 10)
+        self.combo_arduino = ui.dropdown_list(self.main_frame, self.com_ports_arduino, "<<ComboboxSelected>>", self.on_combobox_select_arduino, 0, 5, 10, 10)
         self.combo_arduino.configure(self.com_ports_arduino)
 
         ########################
@@ -131,29 +133,29 @@ class App:
         ########################
         ########## MAIN FRAME
 
-        nr_1 = ui.slider(self.main_frame, 3, 2, 0, 4096, 10, 10, "1", "Pos", 1, self.communicator)
-        nr_2 = ui.slider(self.main_frame, 4, 2, 0, 4096, 10, 10, "2", "Pos", 1, self.communicator)
-        nr_3 = ui.slider(self.main_frame, 5, 2, 0, 4096, 10, 10, "3", "Pos", 1, self.communicator)
-        nr_4 = ui.slider(self.main_frame, 6, 2, 0, 4096, 10, 10, "4", "Pos", 1, self.communicator)
-        nr_5 = ui.slider(self.main_frame, 7, 2, 0, 4096, 10, 10, "5", "Pos", 1, self.communicator)
-        nr_6 = ui.slider(self.main_frame, 8, 2, 0, 4096, 10, 10, "6", "Pos", 1, self.communicator)
+        nr_1 = ui.slider(self.main_frame, 3, 3, 0, 4096, 10, 10, "1", "Pos", 1, self.communicator)
+        nr_2 = ui.slider(self.main_frame, 4, 3, 0, 4096, 10, 10, "2", "Pos", 1, self.communicator)
+        nr_3 = ui.slider(self.main_frame, 5, 3, 0, 4096, 10, 10, "3", "Pos", 1, self.communicator)
+        nr_4 = ui.slider(self.main_frame, 6, 3, 0, 4096, 10, 10, "4", "Pos", 1, self.communicator)
+        nr_5 = ui.slider(self.main_frame, 7, 3, 0, 4096, 10, 10, "5", "Pos", 1, self.communicator)
+        nr_6 = ui.slider(self.main_frame, 8, 3, 0, 4096, 10, 10, "6", "Pos", 1, self.communicator)
         self.sliders = [nr_1, nr_2, nr_3, nr_4, nr_5, nr_6]
 
         for slider, position in zip(self.sliders, self.positions):
             slider.slider.set(position)
             slider.update_label(position)
 
-        self.offset_1 = ui.text_gap(self.main_frame, 120, 3, 4, 10, 10, "e")
-        self.offset_2 = ui.text_gap(self.main_frame, 120, 4, 4, 10, 10, "e")
-        self.offset_3 = ui.text_gap(self.main_frame, 120, 5, 4, 10, 10, "e")
-        self.offset_4 = ui.text_gap(self.main_frame, 120, 6, 4, 10, 10, "e")
-        ui.text_label(self.main_frame, "Offset 1:", "Helvetica", 12, 3, 4, 10, 10, "w")
-        ui.text_label(self.main_frame, "Offset 2:", "Helvetica", 12, 4, 4, 10, 10, "w")
-        ui.text_label(self.main_frame, "Offset 3:", "Helvetica", 12, 5, 4, 10, 10, "w")
-        ui.text_label(self.main_frame, "Offset 4:", "Helvetica", 12, 6, 4, 10, 10, "w")
+        self.offset_1 = ui.text_gap(self.main_frame, 120, 3, 5, 10, 10, "e")
+        self.offset_2 = ui.text_gap(self.main_frame, 120, 4, 5, 10, 10, "e")
+        self.offset_3 = ui.text_gap(self.main_frame, 120, 5, 5, 10, 10, "e")
+        self.offset_4 = ui.text_gap(self.main_frame, 120, 6, 5, 10, 10, "e")
+        ui.text_label(self.main_frame, "Offset 1:", "Helvetica", 12, 3, 5, 10, 10, "w")
+        ui.text_label(self.main_frame, "Offset 2:", "Helvetica", 12, 4, 5, 10, 10, "w")
+        ui.text_label(self.main_frame, "Offset 3:", "Helvetica", 12, 5, 5, 10, 10, "w")
+        ui.text_label(self.main_frame, "Offset 4:", "Helvetica", 12, 6, 5, 10, 10, "w")
 
         btn_change_variable = ui.button(self.main_frame, "Toggle torque", None,
-            lambda: self.communicator.toggle_and_send_command(self.status_torque), 10, 2, 10, 10)
+            lambda: self.communicator.toggle_and_send_command(self.status_torque), 8, 5, 10, 10)
 
         ########################
         ########## PLOT DISPLAY
@@ -171,13 +173,40 @@ class App:
         ########################
         ########## CAMERA SECTION
 
-        button_showcase = ui.button(self.main_frame, "Showcase", None, self.communicator.showcase_camera, 11, 2, 10, 10)
+        # ID:       ZAKRES:       PARA:
+        #   2 UP/DOWN   0-80        LEWA
+        #   3 ROTATION  0-140       LEWA
+        #   4 ROTATION  0-180       PRAWA
+        #   5 UP/DOWN   0-80        PRAWA
+       
+        ##########################################
+
+        ui.text_label(self.main_frame, "Camera ID:", "Helvetica", 12, 11, 0, 10, 10, "w")
+        ui.text_label(self.main_frame, "Target pos:", "Helvetica", 12, 12, 0, 10, 10, "w")
+        ui.text_label(self.main_frame, "Step delay:", "Helvetica", 12, 13, 0, 10, 10, "w")
+        ui.text_label(self.main_frame, "Step size:", "Helvetica", 12, 14, 0, 10, 10, "w")
+
+        self.entry_id        = ui.text_gap(self.main_frame, 100, 11, 0, 25, 10, "e")
+        self.target_position = ui.text_gap(self.main_frame, 100, 12, 0, 25, 10, "e")
+        self.step_delay      = ui.text_gap(self.main_frame, 100, 13, 0, 25, 10, "e")
+        self.step_size       = ui.text_gap(self.main_frame, 100, 14, 0, 25, 10, "e")
+       
+        btn_send_camera = ui.button(self.main_frame, "Send", None,
+            lambda: self.communicator.driver.move_camera(
+                id_camera=int(self.entry_id.get()),
+                target_position=int(self.target_position.get()),
+                step_delay=float(self.step_delay.get()),
+                step_size=int(self.step_size.get())
+            ), 18, 0, 10, 10
+        )
+
+        # button_showcase = ui.button(self.main_frame, "Showcase", None, self.communicator.showcase_camera, 11, 5, 10, 10)
 
         ########################
         ########## CONNECTION SECTION
 
-        btn_refresh_com = ui.button(self.main_frame,"Refresh COM Ports", None, self.refresh_com_ports, 2, 2, 10, 10)
-        btn_refresh_com_arduino = ui.button(self.main_frame, "Refresh Arduino Ports", None, self.refresh_arduino_ports, 2, 4, 10, 10)
+        btn_refresh_com = ui.button(self.main_frame,"Refresh COM Ports", None, self.refresh_com_ports, 2, 3, 10, 10)
+        btn_refresh_com_arduino = ui.button(self.main_frame, "Refresh Arduino Ports", None, self.refresh_arduino_ports, 2, 5, 10, 10)
 
         ########################
         ########## DATA FRAME
@@ -202,27 +231,27 @@ class App:
 
         self.read_camera()
 
-        self.root.after(1, self.get_threads)
-        # self.root.after(1, self.read_camera)
         # self.root.after(100, self.update_table)
         self.root.mainloop()
 
 ###################################
 ####### camera
+
     def read_camera(self):
         self.camera.start()
 
-        frame_ctk = ctk.CTkImage(self.camera.get_image(), size=(200, 200))
+        img0, img1 = self.camera.get_image()
+
+        frame_ctk = ctk.CTkImage(img0, size=(self.frame_size))
         self.camera0.configure(image=frame_ctk)
+
+        frame_ctk = ctk.CTkImage(img1, size=(self.frame_size))
+        self.camera1.configure(image=frame_ctk)
 
         self.camera0.after(1, self.read_camera)
 
-    def get_threads(self):
-        for thread in threading.enumerate():
-            print(thread.name)
-
-    ###################################
-    ####### robot
+###################################
+####### robot
 
     def update_robot(self):
         theta1, theta2, theta3, theta4, pos1, pos2, pos3, pos4 = self.robot.update_robot(self.entry_x.get(), self.entry_y.get(), self.entry_z.get())

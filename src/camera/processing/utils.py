@@ -241,7 +241,7 @@ class Utils:
         dist = picked_object[8]
         fit = picked_object[10]
 
-        if color is not "black":
+        if color != "black":
             cv2.drawContours(image, [picked_object[5]], 0, (0, 0, 0), 3)
             render_info(image, color, fit, pos_x, pos_y, width, height, dist)
 
