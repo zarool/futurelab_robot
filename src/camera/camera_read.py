@@ -1,0 +1,43 @@
+#!/usr/bin/env python3
+
+import cv2
+import struct
+import redis
+import numpy as np
+
+from camera.jetcam.csi_camera import CSICamera
+
+def toRedis(r,a,n):
+   """Store given Numpy array 'a' in Redis under key 'n'"""
+   h, w = a.shape[:2]
+   shape = struct.pack('>II',h,w)
+   encoded = shape + a.tobytes()
+
+   # Store encoded data in Redis
+   r.set(n,encoded)
+   return
+
+
+def start_capture(display_w=800, display_h=500, capture_w=1280, capture_h=720, capture_fps=60, flip=2):
+
+    # Redis connection
+    r = redis.Redis(host='localhost', port=6379, db=0)
+    
+    camera_idx = [0, 1]
+
+    cam0 = CSICamera(capture_device=camera_idx[0], 
+                    width=display_w, height=display_h, 
+                    capture_width=capture_w, capture_height=capture_h, capture_fps=capture_fps, 
+                    flip=flip)
+    
+    cam1 = CSICamera(capture_device=camera_idx[1], 
+                    width=display_w, height=display_h, 
+                    capture_width=capture_w, capture_height=capture_h, capture_fps=capture_fps, 
+                    flip=flip)
+
+    while True:
+        img0 = cam0.read()
+        img1 = cam1.read()
+
+        toRedis(r, img0, 'image0')
+        toRedis(r, img1, 'image1')

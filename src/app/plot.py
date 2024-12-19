@@ -10,6 +10,8 @@ a5 = 90
 
 class Plot:
     def __init__(self) -> None:
+
+        plt.switch_backend('agg')
         self.fig = plt.figure(figsize=(10, 8), dpi=70)
         self.ax = self.fig.add_subplot(111, projection='3d')
 

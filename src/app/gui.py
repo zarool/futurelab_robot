@@ -2,10 +2,9 @@ import customtkinter as ctk
 import tkinter as tk
 from tkinter import ttk
 
-import threading
-
+import sys
 import math
-import numpy as np
+# import numpy as np
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 import app.ui as ui
@@ -354,7 +353,11 @@ class App:
     ####################################
     ######## app event handler
 
+    def quit_app(self):
+        self.root.destroy()
+        # sys.exit(0)
+
     def event_handler(self):
         """Keyboard event handler - Q to quit, N/B to move between photos etc."""
-        self.root.bind("q", lambda x: self.root.destroy())
-        self.root.bind("Q", lambda x: self.root.destroy())
+        self.root.bind("q", lambda x: self.quit_app())
+        self.root.bind("Q", lambda x: self.quit_app())
