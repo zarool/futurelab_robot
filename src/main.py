@@ -32,10 +32,13 @@ def start_app():
     app.run()
 
 if __name__ =="__main__":
+
+    # start camera capture thread
     thread_camera = threading.Thread(target=start_camera, daemon=True, args=())
     thread_camera.start()
 
     time.sleep(1)
 
+    # start GUI application
     start_app()
     
