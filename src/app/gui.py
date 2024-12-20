@@ -18,7 +18,7 @@ COLUMNS_TEXT = ("Id", "Voltage", "Current", "Temperature", "Position", "Load")
 COLUMNS_HEADER = ["Id", "Voltage", "Current", "Temperature", "Position", "Load"]
 
 class App:
-    def __init__(self) -> None:
+    def __init__(self, camera_mode_width, camera_mode_height) -> None:
         ########################
         ############## GUI CONST
         ctk.set_appearance_mode("dark")  # Ustawienie ciemnego trybu
@@ -45,7 +45,7 @@ class App:
         self.communicator = Communicator()
         self.plot = Plot()
         self.robot = Robot()
-        self.camera = Camera(0)
+        self.camera = Camera(camera_mode_width, camera_mode_height)
         self.camera.start()
 
         ########################

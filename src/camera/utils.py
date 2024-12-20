@@ -164,7 +164,7 @@ class Utils:
                 x, y, w, h = cv2.boundingRect(approx)
 
                 # getting object properties
-                width_cm, length_cm, dist = self.approx_length(rect, object_w, object_l)
+                width_cm, length_cm, dist = 0, 0, 0
                 color, fit = self.approx_color(final_image, x, y, w, h)
 
                 # array with final contours
