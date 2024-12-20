@@ -2,9 +2,7 @@ import customtkinter as ctk
 import tkinter as tk
 from tkinter import ttk
 
-import sys
 import math
-# import numpy as np
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 import app.ui as ui
