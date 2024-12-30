@@ -32,9 +32,12 @@ class App:
         self.navbar.grid(row=0, column=0, sticky="ew")
 
         self.main_frame = ctk.CTkFrame(self.root)
+        self.camera_frame = ctk.CTkFrame(self.root)
         self.data_frame = ctk.CTkFrame(self.root)
+
         self.frames = {
             "main_frame": self.main_frame,
+            "camera_frame": self.camera_frame,
             "data_frame": self.data_frame
         }
 
@@ -61,10 +64,10 @@ class App:
 
         self.frame_size = (300, 300)
 
-        self.camera0 = ctk.CTkLabel(self.main_frame, text="")
+        self.camera0 = ctk.CTkLabel(self.camera_frame, text="")
         self.camera0.grid(column=1, row=10, rowspan=5)
 
-        self.camera1 = ctk.CTkLabel(self.main_frame, text="")
+        self.camera1 = ctk.CTkLabel(self.camera_frame, text="")
         self.camera1.grid(column=2, row=10, rowspan=5)
 
         
@@ -178,15 +181,15 @@ class App:
        
         ##########################################
 
-        ui.text_label(self.main_frame, "Camera ID:", "Helvetica", 12, 11, 0, 10, 10, "w")
-        ui.text_label(self.main_frame, "Target pos:", "Helvetica", 12, 12, 0, 10, 10, "w")
-        ui.text_label(self.main_frame, "Step delay:", "Helvetica", 12, 13, 0, 10, 10, "w")
-        ui.text_label(self.main_frame, "Step size:", "Helvetica", 12, 14, 0, 10, 10, "w")
+        ui.text_label(self.camera_frame, "Camera ID:", "Helvetica", 12, 11, 0, 10, 10, "w")
+        ui.text_label(self.camera_frame, "Target pos:", "Helvetica", 12, 12, 0, 10, 10, "w")
+        ui.text_label(self.camera_frame, "Step delay:", "Helvetica", 12, 13, 0, 10, 10, "w")
+        ui.text_label(self.camera_frame, "Step size:", "Helvetica", 12, 14, 0, 10, 10, "w")
 
-        self.entry_id        = ui.text_gap(self.main_frame, 100, 11, 0, 25, 10, "e")
-        self.target_position = ui.text_gap(self.main_frame, 100, 12, 0, 25, 10, "e")
-        self.step_delay      = ui.text_gap(self.main_frame, 100, 13, 0, 25, 10, "e")
-        self.step_size       = ui.text_gap(self.main_frame, 100, 14, 0, 25, 10, "e")
+        self.entry_id        = ui.text_gap(self.camera_frame, 100, 11, 0, 25, 10, "e")
+        self.target_position = ui.text_gap(self.camera_frame, 100, 12, 0, 25, 10, "e")
+        self.step_delay      = ui.text_gap(self.camera_frame, 100, 13, 0, 25, 10, "e")
+        self.step_size       = ui.text_gap(self.camera_frame, 100, 14, 0, 25, 10, "e")
        
         btn_send_camera = ui.button(self.main_frame, "Send", None,
             lambda: self.communicator.driver.move_camera(
