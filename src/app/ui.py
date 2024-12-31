@@ -182,7 +182,7 @@ class table:
 class slider:
     selected_slider = None  # Zmienna klasowa do przechowywania wybranego suwaka
 
-    def __init__(self, window, row, column, min, max, padx, pady, id_number, text, move_function, com):
+    def __init__(self, window, row, column, min, max, padx, pady, id_number, text, move_function, com, cam=None):
         self.window = window
         self.row = row
         self.column = column
@@ -193,8 +193,6 @@ class slider:
         self.id_number = id_number
         self.text = text
         self.move_function = move_function
-
-        self.com = com
 
         # Utworzenie etykiety wyświetlającej wartość slidera
         self.label_min = ctk.CTkLabel(master=self.window, text=str(self.min))
@@ -215,7 +213,7 @@ class slider:
 
         # Aktualizacja etykiety przy zmianie wartości suwaka
         self.slider.bind('<Motion>', self.update_label_from_slider)
-        self.slider.bind('<ButtonRelease-1>', command=lambda: self.on_slider_value_changed(com))  # Wywołanie po zwolnieniu przycisku
+        self.slider.bind('<ButtonRelease-1>', command=lambda: self.on_slider_value_changed(com, cam))  # Wywołanie po zwolnieniu przycisku
 
     def select_slider(self, event):
         slider.selected_slider = self
@@ -242,13 +240,20 @@ class slider:
     def update_label(self, value):
         self.label_value.configure(text=f"ID: {self.id_number} {self.text} {int(float(value))}")
 
-    def on_slider_value_changed(self, com):
+    def on_slider_value_changed(self, com, cam):
         if self.move_function == 1:
             if slider.selected_slider:
                 id_number = slider.selected_slider.id_number
                 position = slider.selected_slider.slider.get()
                 com.move(id_number, position)
+        if self.move_function == 2:
+            if slider.selected_slider:
+                id_number = slider.selected_slider.id_number
+                position = slider.selected_slider.slider.get() 
+                cam.change_param(id_number, position)      
+
     def get(self):
         return self.slider.get()
+    
     def set(self, slider_value):
         self.slider.set(slider_value)

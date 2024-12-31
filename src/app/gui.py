@@ -65,10 +65,15 @@ class App:
         self.frame_size = (300, 300)
 
         self.camera0 = ctk.CTkLabel(self.camera_frame, text="")
-        self.camera0.grid(column=1, row=10, rowspan=5)
-
+        self.camera0_contour = ctk.CTkLabel(self.camera_frame, text="")
         self.camera1 = ctk.CTkLabel(self.camera_frame, text="")
-        self.camera1.grid(column=2, row=10, rowspan=5)
+        self.camera1_contour = ctk.CTkLabel(self.camera_frame, text="")
+        
+        self.camera0.grid(column=1, row=1, rowspan=5)
+        self.camera0_contour.grid(column=1, row=2, rowspan=5)
+
+        self.camera1.grid(column=2, row=1, rowspan=5)
+        self.camera1_contour.grid(column=2, row=2, rowspan=5)
 
         
         ########################
@@ -124,8 +129,10 @@ class App:
 
         button1 = ctk.CTkButton(self.navbar, text="Program", command=lambda: show_frame(self.main_frame))
         button1.grid(row=0, column=0, padx=5, pady=10)
-        button2 = ctk.CTkButton(self.navbar, text="Dane", command=lambda: show_frame(self.data_frame))
+        button2 = ctk.CTkButton(self.navbar, text="Camera", command=lambda: show_frame(self.camera_frame))
         button2.grid(row=0, column=1, padx=5, pady=10)
+        button3 = ctk.CTkButton(self.navbar, text="Dane", command=lambda: show_frame(self.data_frame))
+        button3.grid(row=0, column=2, padx=5, pady=10)
 
         # show main frame by default
         show_frame(self.main_frame)
@@ -180,25 +187,37 @@ class App:
         #   5 UP/DOWN   0-80        PRAWA
        
         ##########################################
-
-        ui.text_label(self.camera_frame, "Camera ID:", "Helvetica", 12, 11, 0, 10, 10, "w")
-        ui.text_label(self.camera_frame, "Target pos:", "Helvetica", 12, 12, 0, 10, 10, "w")
-        ui.text_label(self.camera_frame, "Step delay:", "Helvetica", 12, 13, 0, 10, 10, "w")
-        ui.text_label(self.camera_frame, "Step size:", "Helvetica", 12, 14, 0, 10, 10, "w")
-
-        self.entry_id        = ui.text_gap(self.camera_frame, 100, 11, 0, 25, 10, "e")
-        self.target_position = ui.text_gap(self.camera_frame, 100, 12, 0, 25, 10, "e")
-        self.step_delay      = ui.text_gap(self.camera_frame, 100, 13, 0, 25, 10, "e")
-        self.step_size       = ui.text_gap(self.camera_frame, 100, 14, 0, 25, 10, "e")
+        # test camera movemenet
+        ui.text_label(self.camera_frame, "Camera ID:", "Helvetica", 12, 1, 0, 10, 10, "w")
+        ui.text_label(self.camera_frame, "Target pos:", "Helvetica", 12, 2, 0, 10, 10, "w")
+        ui.text_label(self.camera_frame, "Step delay:", "Helvetica", 12, 3, 0, 10, 10, "w")
+        ui.text_label(self.camera_frame, "Step size:", "Helvetica", 12, 4, 0, 10, 10, "w")
+        self.entry_id        = ui.text_gap(self.camera_frame, 100, 1, 0, 25, 10, "e")
+        self.target_position = ui.text_gap(self.camera_frame, 100, 2, 0, 25, 10, "e")
+        self.step_delay      = ui.text_gap(self.camera_frame, 100, 3, 0, 25, 10, "e")
+        self.step_size       = ui.text_gap(self.camera_frame, 100, 4, 0, 25, 10, "e")
        
-        btn_send_camera = ui.button(self.main_frame, "Send", None,
+        btn_send_camera = ui.button(self.camera_frame, "Send", None,
             lambda: self.communicator.driver.move_camera(
                 id_camera=int(self.entry_id.get()),
                 target_position=int(self.target_position.get()),
                 step_delay=float(self.step_delay.get()),
                 step_size=int(self.step_size.get())
-            ), 18, 0, 10, 10
+            ), 8, 0, 10, 10
         )
+
+        nr_1 = ui.slider(self.camera_frame, 1, 3, 0, 254, 10, 10, "1", "Threshold 1", 2, self.camera)
+        nr_2 = ui.slider(self.camera_frame, 2, 3, 0, 254, 10, 10, "2", "Threshold 2", 2, self.camera)
+        nr_3 = ui.slider(self.camera_frame, 3, 3, 0, 3000, 10, 10, "3", "Max area", 2, self.camera)
+        nr_4 = ui.slider(self.camera_frame, 4, 3, 0, 3000, 10, 10, "4", "Min area", 2, self.camera)
+        nr_5 = ui.slider(self.camera_frame, 5, 3, -100, 100, 10, 10, "5", "Brightness", 2, self.camera)
+        nr_6 = ui.slider(self.camera_frame, 6, 3, 0, 20, 10, 10, "6", "Contrast", 2, self.camera)
+        self.sliders_cam = [nr_1, nr_2, nr_3, nr_4, nr_5, nr_6]
+
+        for slider, position in zip(self.sliders, self.camera.get_param()):
+            slider.slider.set(position)
+            slider.update_label(position)
+
 
         # button_showcase = ui.button(self.main_frame, "Showcase", None, self.communicator.showcase_camera, 11, 5, 10, 10)
 
@@ -227,10 +246,10 @@ class App:
         # check for conenctions
         self.refresh_connections()
 
-        self.event_handler()
-
+        # read images from camera process using redis
         self.read_camera()
 
+        self.event_handler()
         # self.root.after(100, self.update_table)
         self.root.mainloop()
 
@@ -241,12 +260,17 @@ class App:
         self.camera.start()
 
         img0, img1 = self.camera.get_image()
+        img0_cnt, img1_cnt = self.camera.get_contour()
 
-        frame_ctk = ctk.CTkImage(img0, size=(self.frame_size))
-        self.camera0.configure(image=frame_ctk)
+        self.camera0.configure(
+            image=ctk.CTkImage(img0, size=(self.frame_size)))
+        self.camera0_contour.configure(
+            image=ctk.CTkImage(img0_cnt, size=(self.frame_size)))
 
-        frame_ctk = ctk.CTkImage(img1, size=(self.frame_size))
-        self.camera1.configure(image=frame_ctk)
+        self.camera1.configure(
+            image=ctk.CTkImage(img1, size=(self.frame_size)))
+        self.camera1_contour.configure(
+            image=ctk.CTkImage(img1_cnt, size=(self.frame_size)))
 
         self.camera0.after(1, self.read_camera)
 
