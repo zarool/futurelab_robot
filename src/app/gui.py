@@ -70,10 +70,10 @@ class App:
         self.camera1_contour = ctk.CTkLabel(self.camera_frame, text="")
         
         self.camera0.grid(column=1, row=1, rowspan=5)
-        self.camera0_contour.grid(column=1, row=2, rowspan=5)
+        self.camera0_contour.grid(column=1, row=6, rowspan=5)
 
         self.camera1.grid(column=2, row=1, rowspan=5)
-        self.camera1_contour.grid(column=2, row=2, rowspan=5)
+        self.camera1_contour.grid(column=2, row=6, rowspan=5)
 
         
         ########################
