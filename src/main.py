@@ -26,6 +26,8 @@ CAMERA_MODES = [
 ]
 ENV_CAMERA_MODE = 0
 
+ENV_CAMERA_FLIP = 2 # 0 or 2
+ENV_CAMERA_EXPOSURE = 0 # <-2; 2>
 
 def start_camera():
 
@@ -39,7 +41,8 @@ def start_camera():
                   capture_w = CAMERA_MODES[ENV_CAMERA_MODE][0], 
                   capture_h = CAMERA_MODES[ENV_CAMERA_MODE][1], 
                   capture_fps = CAMERA_MODES[ENV_CAMERA_MODE][2], 
-                  flip = 2)
+                  flip = ENV_CAMERA_FLIP,
+                  exposure = ENV_CAMERA_EXPOSURE)
 
 
 def start_app():

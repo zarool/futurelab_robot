@@ -18,7 +18,7 @@ def toRedis(r,a,n):
    return
 
 
-def start_capture(display_w=800, display_h=500, capture_w=1280, capture_h=720, capture_fps=60, flip=2):
+def start_capture(display_w=800, display_h=500, capture_w=1280, capture_h=720, capture_fps=60, flip=2, exposure=0):
 
     # Redis connection
     r = redis.Redis(host='localhost', port=6379, db=0)
@@ -28,12 +28,12 @@ def start_capture(display_w=800, display_h=500, capture_w=1280, capture_h=720, c
     cam0 = CSICamera(capture_device=camera_idx[0], 
                     width=display_w, height=display_h, 
                     capture_width=capture_w, capture_height=capture_h, capture_fps=capture_fps, 
-                    flip=flip)
+                    flip=flip, exposure=exposure)
     
     cam1 = CSICamera(capture_device=camera_idx[1], 
                     width=display_w, height=display_h, 
                     capture_width=capture_w, capture_height=capture_h, capture_fps=capture_fps, 
-                    flip=flip)
+                    flip=flip, exposure=exposure)
 
     while True:
         img0 = cam0.read()
