@@ -99,7 +99,7 @@ class Camera:
                                 final_contours, 
                                 draw_detect=self.detect, draw_info=self.info)
 
-        self.image_contour = cv2.resize(self.image_contour, (int(self.display_w / 2), int(self.display_h / 2)))
+        image_contour = cv2.resize(image_contour, (int(self.display_w / 2), int(self.display_h / 2)))
 
         # 4
         # todo returning picked image coordinates and color

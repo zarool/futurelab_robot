@@ -194,6 +194,8 @@ class slider:
         self.text = text
         self.move_function = move_function
 
+        self.cam = cam
+
         # Utworzenie etykiety wyświetlającej wartość slidera
         self.label_min = ctk.CTkLabel(master=self.window, text=str(self.min))
         self.label_min.grid(row=row, column=column, padx=30, pady=0, sticky="NW")
@@ -213,7 +215,7 @@ class slider:
 
         # Aktualizacja etykiety przy zmianie wartości suwaka
         self.slider.bind('<Motion>', self.update_label_from_slider)
-        self.slider.bind('<ButtonRelease-1>', command=lambda: self.on_slider_value_changed(com, cam))  # Wywołanie po zwolnieniu przycisku
+        self.slider.bind('<ButtonRelease-1>', command=lambda: self.on_slider_value_changed(com))  # Wywołanie po zwolnieniu przycisku
 
     def select_slider(self, event):
         slider.selected_slider = self
@@ -250,7 +252,7 @@ class slider:
             if slider.selected_slider:
                 id_number = slider.selected_slider.id_number
                 position = slider.selected_slider.slider.get() 
-                cam.change_param(id_number, position)      
+                self.cam.change_param(id_number, position)      
 
     def get(self):
         return self.slider.get()
