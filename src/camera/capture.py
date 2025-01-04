@@ -63,12 +63,14 @@ class Camera:
             case 2:
                 self.utils.threshold2 = param
             case 3:
-                self.utils.max_area = param
+                self.utils.epsilon = param
             case 4:
-                self.utils.min_area = param
+                self.utils.max_area = param
             case 5:
-                self.utils.brightness_v = param
+                self.utils.min_area = param
             case 6:
+                self.utils.brightness_v = param
+            case 7:
                 self.utils.contrast_v = param
             case _:
                 pass
@@ -89,7 +91,8 @@ class Camera:
         # width [cm], height [cm], color]
         frame, final_contours = self.utils.detect_square(image_contour, 
                                                          frame, 
-                                                         self.utils.min_area, self.utils.max_area, 
+                                                         self.utils.min_area, 
+                                                         self.utils.max_area, 
                                                          self.OBJECT_W, self.OBJECT_L)
 
         # 3
@@ -97,7 +100,8 @@ class Camera:
         # display info about length, width and color
         self.utils.display_info(frame, 
                                 final_contours, 
-                                draw_detect=self.detect, draw_info=self.info)
+                                draw_detect=self.detect, 
+                                draw_info=self.info)
 
         image_contour = cv2.resize(image_contour, (int(self.display_w / 2), int(self.display_h / 2)))
 

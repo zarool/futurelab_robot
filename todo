@@ -1,5 +1,4 @@
- 2. Update docs
-    a) readme
-    b) reinstall opencv with cuda
-    c) booting new jetson orin nano (firmware update included)
-3. Make script compatible with Windows and Linux
+1. driver arduino connect /dev/ttyCH341USB0`
+2. epsilon slider
+3. change rect recognition from yt tutorial
+4. update functions with nvidia opencv

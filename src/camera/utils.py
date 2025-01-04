@@ -24,6 +24,7 @@ class Utils:
     def __init__(self):
         self.threshold1 = 150
         self.threshold2 = 120
+        self.epsilon = 10
         self.min_area = 350
         self.max_area = 2000
         self.brightness_v = 0
@@ -69,6 +70,71 @@ class Utils:
         erode = cv2.erode(dilation, kernel, iterations=1)
 
         return image2, erode
+
+    # SECOND FUNCTION THAT WILL DETECT SQUARES AND RECTANGLES BASED ON IMAGE CONTOURS
+    # AND RETURNING FINAL CONTOURS OF ALL OBJECTS THAT WERE DETECTED
+    def detect_square(self, model_image, final_image, min_area, max_area, object_w, object_l):
+        # finding contours with cv2 function
+
+        # cv2.RETR_EXTERNAL
+        contours, hierarchy = cv2.findContours(model_image, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+        # cv2.CHAIN_APPROX_SIMPLE
+        final_contours = []
+        # looping through every contour (one contour = set of points)
+        for i, cnt in enumerate(contours):
+            if i == 0:
+                continue
+
+            area = cv2.contourArea(cnt)
+
+            # drawing contours within area value to cancel the noise
+            if min_area < area < max_area:
+                # getting minimal area and rotating the contours
+                # box have four points of rectangle
+                rect = cv2.minAreaRect(cnt)
+                box = cv2.boxPoints(rect)
+                box = np.intp(box)
+
+                # getting straight rectangle
+                epsilon = (self.epsilon/100) * cv2.arcLength(cnt, True)
+                approx = cv2.approxPolyDP(cnt, epsilon, True)
+
+                x, y, w, h = cv2.boundingRect(approx)
+
+                # getting object properties
+                width_cm, length_cm, dist = 0, 0, 0
+                color, fit = self.approx_color(final_image, x, y, w, h)
+
+                # array with final contours
+                # ignoring black color
+                # if color != "black":
+                #     final_contours.append([i, x, y, w, h, box, width_cm, length_cm, dist, color, fit])
+
+                # adding all contours
+                final_contours.append([i, x, y, w, h, box, width_cm, length_cm, dist, color, fit])
+
+        return final_image, final_contours
+
+    # THIRD FUNCTION TO DISPLAY ALL DATA ON FINAL IMAGE
+    @staticmethod
+    def display_info(final_image, contour, draw_detect=True, draw_info=True):
+        for i, cnt in enumerate(contour):
+            x = cnt[1]
+            y = cnt[2]
+            w = cnt[3]
+            h = cnt[4]
+            box = cnt[5]
+            width_cm = cnt[6]
+            length_cm = cnt[7]
+            dist = cnt[8]
+            color = cnt[9]
+            fit = cnt[10]
+
+            if draw_detect:
+                cv2.drawContours(final_image, [box], 0, (0, 0, 255), 2)
+
+            if draw_info:
+                render_info(final_image, color, fit, x, y, w, h, dist)
 
     # APPROXIMATING REAL LENGTH AND COLOR OF OBJECT
     @staticmethod
@@ -138,65 +204,6 @@ class Utils:
         #                     (255, 255, 255), 1)
 
         return closest_color, fit
-
-    # SECOND FUNCTION THAT WILL DETECT SQUARES AND RECTANGLES BASED ON IMAGE CONTOURS
-    # AND RETURNING FINAL CONTOURS OF ALL OBJECTS THAT WERE DETECTED
-    def detect_square(self, model_image, final_image, min_area, max_area, object_w, object_l):
-        # finding contours with cv2 function
-        contours, hierarchy = cv2.findContours(model_image, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-        # cv2.CHAIN_APPROX_SIMPLE
-        final_contours = []
-        # looping through every contour (one contour = set of points)
-        for i, cnt in enumerate(contours):
-            area = cv2.contourArea(cnt)
-
-            # drawing contours within area value to cancel the noise
-            if min_area < area < max_area:
-                # getting minimal area and rotating the contours
-                # box have four points of rectangle
-                rect = cv2.minAreaRect(cnt)
-                box = cv2.boxPoints(rect)
-                box = np.intp(box)
-
-                # getting straight rectangle
-                epsilon = 0.02 * cv2.arcLength(cnt, True)
-                approx = cv2.approxPolyDP(cnt, epsilon, True)
-                x, y, w, h = cv2.boundingRect(approx)
-
-                # getting object properties
-                width_cm, length_cm, dist = 0, 0, 0
-                color, fit = self.approx_color(final_image, x, y, w, h)
-
-                # array with final contours
-                # ignoring black color
-                if color != "black":
-                    final_contours.append([i, x, y, w, h, box, width_cm, length_cm, dist, color, fit])
-
-                # adding all contours
-                # final_contours.append([i, x, y, w, h, box, width_cm, length_cm, dist, color, fit])
-
-        return final_image, final_contours
-
-    # THIRD FUNCTION TO DISPLAY ALL DATA ON FINAL IMAGE
-    @staticmethod
-    def display_info(final_image, contour, draw_detect=True, draw_info=True):
-        for i, cnt in enumerate(contour):
-            x = cnt[1]
-            y = cnt[2]
-            w = cnt[3]
-            h = cnt[4]
-            box = cnt[5]
-            width_cm = cnt[6]
-            length_cm = cnt[7]
-            dist = cnt[8]
-            color = cnt[9]
-            fit = cnt[10]
-
-            if draw_detect:
-                cv2.drawContours(final_image, [box], 0, (0, 0, 255), 2)
-
-            if draw_info:
-                render_info(final_image, color, fit, x, y, w, h, dist)
 
     @staticmethod
     def pick_object(image, contours):

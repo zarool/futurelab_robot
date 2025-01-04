@@ -30,14 +30,14 @@ def start_capture(display_w=800, display_h=500, capture_w=1280, capture_h=720, c
                     capture_width=capture_w, capture_height=capture_h, capture_fps=capture_fps, 
                     flip=flip, exposure=exposure)
     
-    cam1 = CSICamera(capture_device=camera_idx[1], 
-                    width=display_w, height=display_h, 
-                    capture_width=capture_w, capture_height=capture_h, capture_fps=capture_fps, 
-                    flip=flip, exposure=exposure)
+    # cam1 = CSICamera(capture_device=camera_idx[1], 
+    #                 width=display_w, height=display_h, 
+    #                 capture_width=capture_w, capture_height=capture_h, capture_fps=capture_fps, 
+    #                 flip=flip, exposure=exposure)
 
     while True:
         img0 = cam0.read()
-        img1 = cam1.read()
+        img1 = cam0.read()
 
         toRedis(r, img0, 'image0')
         toRedis(r, img1, 'image1')

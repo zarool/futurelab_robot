@@ -26,12 +26,12 @@ CAMERA_MODES = [
 ]
 ENV_CAMERA_MODE = 0
 
-ENV_CAMERA_FLIP = 2 # 0 or 2
+ENV_CAMERA_FLIP = 0 # 0 or 2
 ENV_CAMERA_EXPOSURE = 0 # <-2; 2>
 
 def start_camera():
 
-    os.environ["DISPLAY"] = ENV_DISPLAY_CAMERA
+    # os.environ["DISPLAY"] = ENV_DISPLAY_CAMERA
     print("[ ] Variable DISPLAY on camera process is", os.environ["DISPLAY"])
     print("[+] Started camera capture process. Saving frames to redis database")
 
@@ -47,7 +47,7 @@ def start_camera():
 
 def start_app():
 
-    os.environ["DISPLAY"] = ENV_DISPLAY_APP
+    # os.environ["DISPLAY"] = ENV_DISPLAY_APP
     print("[ ] Variable DISPLAY on app process is", os.environ["DISPLAY"])
     print("[+] Started GUI app.")
     

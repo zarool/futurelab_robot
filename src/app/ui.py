@@ -182,7 +182,7 @@ class table:
 class slider:
     selected_slider = None  # Zmienna klasowa do przechowywania wybranego suwaka
 
-    def __init__(self, window, row, column, min, max, padx, pady, id_number, text, move_function, com, cam=None):
+    def __init__(self, window, row, column, min, max, padx, pady, id_number, text, move_function, com=None, cam=None, value=None):
         self.window = window
         self.row = row
         self.column = column
@@ -193,8 +193,6 @@ class slider:
         self.id_number = id_number
         self.text = text
         self.move_function = move_function
-
-        self.cam = cam
 
         # Utworzenie etykiety wyświetlającej wartość slidera
         self.label_min = ctk.CTkLabel(master=self.window, text=str(self.min))
@@ -215,7 +213,10 @@ class slider:
 
         # Aktualizacja etykiety przy zmianie wartości suwaka
         self.slider.bind('<Motion>', self.update_label_from_slider)
-        self.slider.bind('<ButtonRelease-1>', command=lambda: self.on_slider_value_changed(com))  # Wywołanie po zwolnieniu przycisku
+        self.slider.bind('<ButtonRelease-1>', command=lambda event: self.on_slider_value_changed(com, cam))  # Wywołanie po zwolnieniu przycisku
+
+        if value != None:
+            self.slider.set(value)
 
     def select_slider(self, event):
         slider.selected_slider = self
@@ -242,17 +243,17 @@ class slider:
     def update_label(self, value):
         self.label_value.configure(text=f"ID: {self.id_number} {self.text} {int(float(value))}")
 
-    def on_slider_value_changed(self, com):
-        if self.move_function == 1:
+    def on_slider_value_changed(self, com, cam):
+        if self.move_function == 1 and com != None:
             if slider.selected_slider:
                 id_number = slider.selected_slider.id_number
                 position = slider.selected_slider.slider.get()
                 com.move(id_number, position)
-        if self.move_function == 2:
+        if self.move_function == 2 and cam != None:
             if slider.selected_slider:
                 id_number = slider.selected_slider.id_number
                 position = slider.selected_slider.slider.get() 
-                self.cam.change_param(id_number, position)      
+                cam.change_param(id_number, position)      
 
     def get(self):
         return self.slider.get()

@@ -23,8 +23,8 @@ class Driver:
 
         self.connection_status = None
         self.selected_port = ""
-        self.arduino_port = ""
-        self.esp32_port = ""
+        self.arduino_port = "/dev/ttyCH341USB0"
+        self.esp32_port = "/dev/ttyUSB0"
         self.ser_arduino = None
         self.ser_esp32 = None
 

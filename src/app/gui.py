@@ -62,18 +62,23 @@ class App:
         ########################
         ########## camera
 
-        self.frame_size = (300, 300)
+        self.frame_size = (400, 400)
+        self.frame_rowspan = 7
+        self.grid_pos_col = 1
+        self.grid_pos_row = 1
+        self.camera0_grid = [self.grid_pos_col, self.grid_pos_row]
+        self.camera1_grid = [self.camera0_grid[0] + 1, self.grid_pos_row]
 
         self.camera0 = ctk.CTkLabel(self.camera_frame, text="")
         self.camera0_contour = ctk.CTkLabel(self.camera_frame, text="")
         self.camera1 = ctk.CTkLabel(self.camera_frame, text="")
         self.camera1_contour = ctk.CTkLabel(self.camera_frame, text="")
         
-        self.camera0.grid(column=1, row=1, rowspan=5)
-        self.camera0_contour.grid(column=1, row=6, rowspan=5)
+        self.camera0.grid(column=self.camera0_grid[0], row=self.camera0_grid[1], rowspan=self.frame_rowspan)
+        self.camera0_contour.grid(column=self.camera0_grid[0], row=self.camera0_grid[1] + self.frame_rowspan, rowspan=self.frame_rowspan)
 
-        self.camera1.grid(column=2, row=1, rowspan=5)
-        self.camera1_contour.grid(column=2, row=6, rowspan=5)
+        self.camera1.grid(column=self.camera1_grid[0], row=self.camera1_grid[1], rowspan=self.frame_rowspan)
+        self.camera1_contour.grid(column=self.camera1_grid[0], row=self.camera1_grid[1] + self.frame_rowspan, rowspan=self.frame_rowspan)
 
         
         ########################
@@ -140,12 +145,12 @@ class App:
         ########################
         ########## MAIN FRAME
 
-        nr_1 = ui.slider(self.main_frame, 3, 3, 0, 4096, 10, 10, "1", "Pos", 1, self.communicator)
-        nr_2 = ui.slider(self.main_frame, 4, 3, 0, 4096, 10, 10, "2", "Pos", 1, self.communicator)
-        nr_3 = ui.slider(self.main_frame, 5, 3, 0, 4096, 10, 10, "3", "Pos", 1, self.communicator)
-        nr_4 = ui.slider(self.main_frame, 6, 3, 0, 4096, 10, 10, "4", "Pos", 1, self.communicator)
-        nr_5 = ui.slider(self.main_frame, 7, 3, 0, 4096, 10, 10, "5", "Pos", 1, self.communicator)
-        nr_6 = ui.slider(self.main_frame, 8, 3, 0, 4096, 10, 10, "6", "Pos", 1, self.communicator)
+        nr_1 = ui.slider(self.main_frame, 3, 3, 0, 4096, 10, 10, "1", "Pos", 1, com=self.communicator)
+        nr_2 = ui.slider(self.main_frame, 4, 3, 0, 4096, 10, 10, "2", "Pos", 1, com=self.communicator)
+        nr_3 = ui.slider(self.main_frame, 5, 3, 0, 4096, 10, 10, "3", "Pos", 1, com=self.communicator)
+        nr_4 = ui.slider(self.main_frame, 6, 3, 0, 4096, 10, 10, "4", "Pos", 1, com=self.communicator)
+        nr_5 = ui.slider(self.main_frame, 7, 3, 0, 4096, 10, 10, "5", "Pos", 1, com=self.communicator)
+        nr_6 = ui.slider(self.main_frame, 8, 3, 0, 4096, 10, 10, "6", "Pos", 1, com=self.communicator)
         self.sliders = [nr_1, nr_2, nr_3, nr_4, nr_5, nr_6]
 
         for slider, position in zip(self.sliders, self.positions):
@@ -203,15 +208,16 @@ class App:
                 target_position=int(self.target_position.get()),
                 step_delay=float(self.step_delay.get()),
                 step_size=int(self.step_size.get())
-            ), 8, 0, 10, 10
+            ), 5, 0, 10, 10
         )
 
-        nr_1 = ui.slider(self.camera_frame, 1, 3, 0, 254, 10, 10, "1", "Threshold 1", 2, self.camera)
-        nr_2 = ui.slider(self.camera_frame, 2, 3, 0, 254, 10, 10, "2", "Threshold 2", 2, self.camera)
-        nr_3 = ui.slider(self.camera_frame, 3, 3, 0, 3000, 10, 10, "3", "Max area", 2, self.camera)
-        nr_4 = ui.slider(self.camera_frame, 4, 3, 0, 3000, 10, 10, "4", "Min area", 2, self.camera)
-        nr_5 = ui.slider(self.camera_frame, 5, 3, -100, 100, 10, 10, "5", "Brightness", 2, self.camera)
-        nr_6 = ui.slider(self.camera_frame, 6, 3, 0, 20, 10, 10, "6", "Contrast", 2, self.camera)
+        nr_1 = ui.slider(self.camera_frame, 1, 3, 0, 254, 10, 10, "1", "Threshold 1", 2, cam=self.camera, value=150)
+        nr_2 = ui.slider(self.camera_frame, 2, 3, 0, 254, 10, 10, "2", "Threshold 2", 2, cam=self.camera, value=120)
+        nr_3 = ui.slider(self.camera_frame, 3, 3, 0, 100, 10, 10, "3", "Epsilon [%]", 2, cam=self.camera, value=10)
+        nr_4 = ui.slider(self.camera_frame, 4, 3, 0, 10000, 10, 10, "4", "Max area", 2, cam=self.camera, value=8000)
+        nr_5 = ui.slider(self.camera_frame, 5, 3, 0, 8000, 10, 10, "5", "Min area", 2, cam=self.camera, value=1000)
+        nr_6 = ui.slider(self.camera_frame, 6, 3, -100, 100, 10, 10, "6", "Brightness", 2, cam=self.camera)
+        nr_7 = ui.slider(self.camera_frame, 7, 3, 0, 20, 10, 10, "7", "Contrast", 2, cam=self.camera)
         self.sliders_cam = [nr_1, nr_2, nr_3, nr_4, nr_5, nr_6]
 
         for slider, position in zip(self.sliders, self.camera.get_param()):
