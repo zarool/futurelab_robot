@@ -97,8 +97,12 @@ Dokładny opis klas oraz ich funkcji został opisany w [dokumentacji](docs/docum
 
 Podstawowa wersja GUI programu.
 
-<img src="docs/assets/screenshots/main_v0.0.1.png" alt="Alpha version" width="900"></img>
+<img src="docs/assets/screenshots/0_main.png" alt="Main frame" width="900"></img>
 
 Zakładka z danymi
 
-<img src="docs/assets/screenshots/data_v0.0.1.png" alt="Alpha version, data frame" width="900"></img>
+<img src="docs/assets/screenshots/1_camera.png" alt="Camera frame" width="900"></img>
+
+Zakładka z danymi
+
+<img src="docs/assets/screenshots/2_data.png" alt="Data frame" width="900"></img>

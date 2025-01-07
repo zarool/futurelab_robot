@@ -23,15 +23,17 @@ class Driver:
 
         self.connection_status = None
         self.selected_port = ""
-        self.arduino_port = ""
-        self.esp32_port = ""
+        self.arduino_port = "/dev/ttyCH341USB0"
+        self.esp32_port = "/dev/ttyUSB0"
         self.ser_arduino = None
         self.ser_esp32 = None
 
-    def move_camera(self, id_camera, position):
+    def move_camera(self, id_camera, target_position, step_delay, step_size):
         id_camera = int(id_camera)
-        position = int(position)
-        self.send_command_camera(f"{id_camera},{position}")
+        target_position = int(target_position)
+        step_delay = float(step_delay)
+        step_size = int(step_size)
+        self.send_command_camera(f"{id_camera},{target_position},{step_delay},{step_size}")
 
     def send_command_camera(self, command):
         if command and self.ser_arduino is not None and self.ser_arduino.is_open:
@@ -145,10 +147,10 @@ class Driver:
 
     def start_receive_data_thread(self, callback):
         self.running = True
-        arduino_thread = threading.Thread(target=lambda: self.receive_data(self.ser_arduino, callback), daemon=True)
-        esp32_thread = threading.Thread(target=lambda: self.receive_data(self.ser_esp32, callback), daemon=True)
-        arduino_thread.start()
-        esp32_thread.start()
+        # arduino_thread = threading.Thread(target=lambda: self.receive_data(self.ser_arduino, callback), daemon=True)
+        # esp32_thread = threading.Thread(target=lambda: self.receive_data(self.ser_esp32, callback), daemon=True)
+        # arduino_thread.start()
+        # esp32_thread.start()
 
     def stop_receiving(self):
         self.running = False

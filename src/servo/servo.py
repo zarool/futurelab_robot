@@ -1,4 +1,4 @@
-import servo.driver as com
+import src.servo.driver as com
 
 # dont work, moved to driver.py -> Driver class
 def move_to_position(pos1, pos2, pos3, pos4, off_1, off_2, off_3, off_4):

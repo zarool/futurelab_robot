@@ -1,6 +1,6 @@
 import time
 
-from servo.driver import Driver
+from src.servo.driver import Driver
 
 class Communicator():
     def __init__(self) -> None:
@@ -28,10 +28,10 @@ class Communicator():
         self.driver.start_receive_data_thread(callback)
 
     def connect_esp32(self):
-        self.driver.connect_esp32()
+        return self.driver.connect_esp32()
 
     def connect_arduino(self):
-        self.driver.connect_arduino()
+        return self.driver.connect_arduino()
 
 
 

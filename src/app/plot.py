@@ -2,7 +2,7 @@ import math
 import numpy as np
 import matplotlib.pyplot as plt
 
-from robot.matrices import *
+from src.robot.matrices import *
 
 a3 = 152.794
 a4 = 157.76
@@ -10,7 +10,9 @@ a5 = 90
 
 class Plot:
     def __init__(self) -> None:
-        self.fig = plt.figure(figsize=(10, 8))
+
+        plt.switch_backend('agg')
+        self.fig = plt.figure(figsize=(10, 8), dpi=70)
         self.ax = self.fig.add_subplot(111, projection='3d')
 
     def plot_robot(self, robot, theta1, theta2, theta3, theta4):
