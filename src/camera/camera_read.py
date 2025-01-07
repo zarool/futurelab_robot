@@ -39,23 +39,23 @@ def start_capture(display_w=800, display_h=500, capture_w=1280, capture_h=720, c
         saturation=saturation,
         ae_lock=auto_exposure)
     
-    # cam1 = CSICamera(
-    #     capture_device=camera_idx[1], 
-    #     width=display_w, 
-    #     height=display_h, 
-    #     capture_width=capture_w, 
-    #     capture_height=capture_h, 
-    #     capture_fps=capture_fps, 
-    #     flip=flip, 
-    #     exposure=exposure,
-    #     tnr_strength=tnr_strength,
-    #     wb_mode=wb_mode,
-    #     saturation=saturation,
-    #     ae_lock=auto_exposure)
+    cam1 = CSICamera(
+        capture_device=camera_idx[1], 
+        width=display_w, 
+        height=display_h, 
+        capture_width=capture_w, 
+        capture_height=capture_h, 
+        capture_fps=capture_fps, 
+        flip=flip, 
+        exposure=exposure,
+        tnr_strength=tnr_strength,
+        wb_mode=wb_mode,
+        saturation=saturation,
+        ae_lock=auto_exposure)
 
     while True:
         img0 = cam0.read()
-        img1 = cam0.read()
+        img1 = cam1.read()
 
         toRedis(r, img0, 'image0')
         toRedis(r, img1, 'image1')

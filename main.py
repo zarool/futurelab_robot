@@ -6,6 +6,7 @@ from src.app.gui import App
 from src.camera.camera_read import start_capture
 
 
+DO_CHANGE_ENV = True
 ENV_DISPLAY_CAMERA = ":0"
 ENV_DISPLAY_APP = ":1"
 
@@ -31,9 +32,10 @@ ENV_CAMERA = {
 
 def start_camera():
 
-    # os.environ["DISPLAY"] = ENV_DISPLAY_CAMERA
-    print("[ ] Variable DISPLAY on camera process is", os.environ["DISPLAY"])
-    print("[+] Started camera capture process. Saving frames to redis database")
+    if DO_CHANGE_ENV:
+        os.environ["DISPLAY"] = ENV_DISPLAY_CAMERA
+        print("[ ] Variable DISPLAY on camera process is", os.environ["DISPLAY"])
+        print("[+] Started camera capture process. Saving frames to redis database")
 
     # possible args
     # display_w=800, display_h=500, capture_w=1280, capture_h=720, capture_fps=60, flip=2
@@ -50,10 +52,10 @@ def start_camera():
 
 
 def start_app():
-
-    # os.environ["DISPLAY"] = ENV_DISPLAY_APP
-    print("[ ] Variable DISPLAY on app process is", os.environ["DISPLAY"])
-    print("[+] Started GUI app.")
+    if DO_CHANGE_ENV:
+        os.environ["DISPLAY"] = ENV_DISPLAY_APP
+        print("[ ] Variable DISPLAY on app process is", os.environ["DISPLAY"])
+        print("[+] Started GUI app.")
     
     app = App(CAMERA_MODES[ENV_CAMERA["MODE"]][0], CAMERA_MODES[ENV_CAMERA["MODE"]][1])
     app.run()
