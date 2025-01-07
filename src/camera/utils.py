@@ -37,9 +37,15 @@ class Utils:
     # ADDING MASKS FOR IMAGE
     @staticmethod
     def masking(img, lower, upper):
-        hsv_image = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+
+        image_gpu = cv2.cuda_GpuMat()
+        image_gpu.upload(img)
+        image_gpu = cv2.cuda.cvtColor(image_gpu, cv2.COLOR_BGR2HSV)
+        hsv_image = image_gpu.download()
+
         mask = cv2.inRange(hsv_image, lower, upper)
         masked_img = cv2.bitwise_and(img, img, mask=mask)
+
         return masked_img
 
     # FIRST FUNCTION TO GET CONTOURS (BLACK AND WHITE IMAGE)
@@ -53,14 +59,19 @@ class Utils:
 
         # 1.1
         # adding gray filter to image
-        if c_thr is None:
-            c_thr = [150, 120]
-        gray_image = cv2.cvtColor(image2, cv2.COLOR_BGR2GRAY)
+        gray_image_gpu = cv2.cuda_GpuMat()
+        gray_image_gpu.upload(image2)
+        gray_image_gpu = cv2.cuda.cvtColor(gray_image_gpu, cv2.COLOR_BGR2GRAY)
 
         # 1.2
         # https://docs.opencv.org/3.4/da/d22/tutorial_py_canny.html
         # new threshold method (Canny), better than standard opencv threshold
-        canny = cv2.Canny(gray_image, c_thr[0], c_thr[1])
+        if c_thr is None:
+            c_thr = [150, 120]
+        
+        detector = cv2.cuda.createCannyEdgeDetector(low_thresh=c_thr[0], high_thresh=c_thr[1])
+        canny_gpu = detector.detect(gray_image_gpu)
+        canny = canny_gpu.download()
 
         # 1.3
         # https://docs.opencv.org/3.4/db/df6/tutorial_erosion_dilatation.html

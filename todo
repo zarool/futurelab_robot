@@ -1,5 +1,4 @@
 1. add CUDA support to opencv image processing (jtn cam analysis)
-2. readme update screenshots
+
 3. merge branch
 4. uncomment env DISPLAY setup
-5. move main.py
