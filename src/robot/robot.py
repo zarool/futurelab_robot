@@ -1,7 +1,7 @@
 import numpy as np
 
-from robot.kinematics import inverse_kinematics
-from robot.matrices import *
+from src.robot.kinematics import inverse_kinematics
+from src.robot.matrices import *
 
 class Robot:
     def __init__(self) -> None:

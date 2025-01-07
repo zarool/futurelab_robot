@@ -5,11 +5,11 @@ from tkinter import ttk
 import math
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
-import app.ui as ui
-from app.plot import Plot
-from app.conn import Communicator
-from robot.robot import Robot
-from camera.capture import Camera
+import src.app.ui as ui
+from src.app.plot import Plot
+from src.app.conn import Communicator
+from src.robot.robot import Robot
+from src.camera.capture import Camera
 
 # COLUMNS_TEXT PROB NOT NEEDED
 COLUMNS_TEXT = ("Id", "Voltage", "Current", "Temperature", "Position", "Load")

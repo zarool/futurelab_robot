@@ -1,6 +1,6 @@
 import math
 import numpy as np
-from robot.matrices import compute_end_pos
+from src.robot.matrices import compute_end_pos
 
 
 def inverse_kinematics(x, y, z, a2=152.794, a3=157.76, a4=90):

@@ -5,7 +5,7 @@ from PIL import Image, ImageTk
 import struct
 import redis
 
-from camera.utils import Utils
+from src.camera.utils import Utils
 
 # [WIDTH, HEIGHT, FPS]
 CAMERA_MODES = [

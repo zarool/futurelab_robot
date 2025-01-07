@@ -1,6 +1,6 @@
 import time
 
-from servo.driver import Driver
+from src.servo.driver import Driver
 
 class Communicator():
     def __init__(self) -> None:

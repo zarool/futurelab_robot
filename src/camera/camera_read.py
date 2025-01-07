@@ -5,7 +5,7 @@ import struct
 import redis
 import numpy as np
 
-from camera.jetcam.csi_camera import CSICamera
+from src.camera.jetcam.csi_camera import CSICamera
 
 def toRedis(r,a,n):
    """Store given Numpy array 'a' in Redis under key 'n'"""
@@ -18,22 +18,40 @@ def toRedis(r,a,n):
    return
 
 
-def start_capture(display_w=800, display_h=500, capture_w=1280, capture_h=720, capture_fps=60, flip=2, exposure=0):
+def start_capture(display_w=800, display_h=500, capture_w=1280, capture_h=720, capture_fps=60, flip=2, exposure=0, tnr_strength=1, wb_mode=1, saturation=1.0, auto_exposure=False):
 
     # Redis connection
     r = redis.Redis(host='localhost', port=6379, db=0)
     
     camera_idx = [0, 1]
 
-    cam0 = CSICamera(capture_device=camera_idx[0], 
-                    width=display_w, height=display_h, 
-                    capture_width=capture_w, capture_height=capture_h, capture_fps=capture_fps, 
-                    flip=flip, exposure=exposure)
+    cam0 = CSICamera(
+        capture_device=camera_idx[0], 
+        width=display_w, 
+        height=display_h, 
+        capture_width=capture_w, 
+        capture_height=capture_h, 
+        capture_fps=capture_fps, 
+        flip=flip, 
+        exposure=exposure,
+        tnr_strength=tnr_strength,
+        wb_mode=wb_mode,
+        saturation=saturation,
+        ae_lock=auto_exposure)
     
-    # cam1 = CSICamera(capture_device=camera_idx[1], 
-    #                 width=display_w, height=display_h, 
-    #                 capture_width=capture_w, capture_height=capture_h, capture_fps=capture_fps, 
-    #                 flip=flip, exposure=exposure)
+    # cam1 = CSICamera(
+    #     capture_device=camera_idx[1], 
+    #     width=display_w, 
+    #     height=display_h, 
+    #     capture_width=capture_w, 
+    #     capture_height=capture_h, 
+    #     capture_fps=capture_fps, 
+    #     flip=flip, 
+    #     exposure=exposure,
+    #     tnr_strength=tnr_strength,
+    #     wb_mode=wb_mode,
+    #     saturation=saturation,
+    #     ae_lock=auto_exposure)
 
     while True:
         img0 = cam0.read()

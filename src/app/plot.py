@@ -2,7 +2,7 @@ import math
 import numpy as np
 import matplotlib.pyplot as plt
 
-from robot.matrices import *
+from src.robot.matrices import *
 
 a3 = 152.794
 a4 = 157.76
