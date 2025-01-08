@@ -99,7 +99,7 @@ Podstawowa wersja GUI programu.
 
 <img src="docs/assets/screenshots/0_main.png" alt="Main frame" width="900"></img>
 
-Zakładka z danymi
+Zakładka z widokiem kamer
 
 <img src="docs/assets/screenshots/1_camera.png" alt="Camera frame" width="900"></img>
 
