@@ -314,9 +314,12 @@ class App:
         return distance
 
     def center_camera(self, object0, object1):
+        
+        # ADJUST LEFT CAMERA TO CENTER OBJECT ON SCREEN
         object0_x = object0[0]
         object0_y = object0[1]
 
+        # ADJUST RIGHT CAMERA TO CENTER OBJECT ON SCREEN
         object1_x = object1[0]
         object1_y = object1[1]
 
