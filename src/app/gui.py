@@ -296,7 +296,8 @@ class App:
         theta0, theta1 = self.communicator.get_servo_angles()
 
         self.distance = self.calc_distance(theta0, theta1)
-
+        self.camera.distance = self.distance
+        
         self.label_distance.set(f"Calculated distance: {self.distance} [cm]")
 
     def calc_distance(self, length, theta0, theta1):

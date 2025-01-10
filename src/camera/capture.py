@@ -28,10 +28,10 @@ def fromRedis(r,n):
 class Camera:
     def __init__(self, width, height):
         # system arguments default values
-        self.cam_disp = 1#cam_disp
-        self.contour = 0#contour
-        self.detect = 1#detect
-        self.info = 1#info
+        self.cam_disp = 1 # cam_disp
+        self.contour = 0 # return contour (canny, threshold) image
+        self.detect = 1 # show detected all squares
+        self.info = 0 # info about width, height of detected square, distance
 
         # display window size
         self.display_w = width
@@ -49,6 +49,8 @@ class Camera:
         self.image1 = None
         self.image1_contour = None
         self.detected_object1 = [0, 0, 0, 0, 0, 0]
+
+        self.distance = 0
 
         # UTILS
         self.utils = Utils()
@@ -100,6 +102,7 @@ class Camera:
         # display info about length, width and color
         self.utils.display_info(frame, 
                                 final_contours, 
+                                self.distance,
                                 draw_detect=self.detect, 
                                 draw_info=self.info)
 
@@ -107,7 +110,7 @@ class Camera:
 
         # 4
         # todo returning picked image coordinates and color
-        detected_object = self.utils.pick_object(frame, final_contours)
+        detected_object = self.utils.pick_object(frame, final_contours, self.distance)
 
         return frame, image_contour, detected_object
 

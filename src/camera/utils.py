@@ -3,18 +3,13 @@ import numpy as np
 import warnings
 
 
-def render_info(final_image, color, fit, x, y, w, h, dist):
-    cv2.putText(final_image, str(color) + " " + str(fit) + "%", (int(x + w / 2), int(y + h + 20)),
-                cv2.FONT_HERSHEY_SIMPLEX, 0.5,
-                (255, 255, 255), 1)
+def render_info(final_image, x, y, w, h, dist):
+    # cv2.putText(final_image, str(color) + " " + str(fit) + "%", (int(x + w / 2), int(y + h + 20)),
+    #             cv2.FONT_HERSHEY_SIMPLEX, 0.5,
+    #             (255, 255, 255), 1)
 
     # real distance from camera
-    cv2.putText(final_image, str(dist) + " [dist cm]", (int(x + w / 2), int(y + h + 35)),
-                cv2.FONT_HERSHEY_SIMPLEX, 0.5,
-                (255, 255, 255), 1)
-
-    # testing - delete later
-    cv2.putText(final_image, str(round(w, 2)) + " [width px]", (int(x + w / 2), int(y + h + 50)),
+    cv2.putText(final_image, str(dist) + " [cm]", (int(x + w / 2), int(y + h + 20)),
                 cv2.FONT_HERSHEY_SIMPLEX, 0.5,
                 (255, 255, 255), 1)
 
@@ -112,123 +107,37 @@ class Utils:
 
                 x, y, w, h = cv2.boundingRect(approx)
 
-                # getting object properties
-                width_cm, length_cm, dist = 0, 0, 0
-                color, fit = self.approx_color(final_image, x, y, w, h)
-
-                # array with final contours
-                # ignoring black color
-                # if color != "black":
-                #     final_contours.append([i, x, y, w, h, box, width_cm, length_cm, dist, color, fit])
-
                 # adding all contours
-                final_contours.append([i, x, y, w, h, box, width_cm, length_cm, dist, color, fit])
+                final_contours.append([i, x, y, w, h, box])
 
         return final_image, final_contours
 
     # THIRD FUNCTION TO DISPLAY ALL DATA ON FINAL IMAGE
     @staticmethod
-    def display_info(final_image, contour, draw_detect=True, draw_info=True):
+    def display_info(final_image, contour, distance, draw_detect=True, draw_info=True):
         for i, cnt in enumerate(contour):
             x = cnt[1]
             y = cnt[2]
             w = cnt[3]
             h = cnt[4]
             box = cnt[5]
-            width_cm = cnt[6]
-            length_cm = cnt[7]
-            dist = cnt[8]
-            color = cnt[9]
-            fit = cnt[10]
 
             if draw_detect:
                 cv2.drawContours(final_image, [box], 0, (0, 0, 255), 2)
 
             if draw_info:
-                render_info(final_image, color, fit, x, y, w, h, dist)
+                render_info(final_image, x, y, w, h, distance)
 
-    # APPROXIMATING REAL LENGTH AND COLOR OF OBJECT
-    @staticmethod
-    def approx_length(rect, object_w, object_l):
-        # 1
-        # https://stackoverflow.com/questions/14038002/opencv-how-to-calculate-distance-between-camera-and-object-using-image
-        # 2
-        # https://stackoverflow.com/questions/6714069/finding-distance-from-camera-to-object-of-known-size
-        # 3
-        # https://pyimagesearch.com/2015/01/19/find-distance-camera-objectmarker-using-python-opencv/
-
-        # focal_length = (width [px] * real_distance)  / real_width
-        # dist = (real_width * focal_length) / width [px]
-        focal_length = (290 * 24) / object_w
-        dist = (object_w * focal_length) / rect[1][0]
-        distance_m = round(dist, 2)
-
-        width_px = rect[1][0]
-        height_px = rect[1][1]
-        # distance_m = round(83 / height_px, 2)
-        length_cm = height_px
-        width_cm = width_px
-        return width_cm, length_cm, distance_m
 
     @staticmethod
-    def approx_color(img, x, y, w, h):
-        closest_color = "black"
-        fit = "0"
-        colors = {
-            # "white": (255, 255, 255),
-            "black": (0, 0, 0),
-            "red": (255, 0, 0),
-            "green": (0, 255, 0),
-            "blue": (0, 0, 255)
-        }
-
-        # first method
-        scale = (w * (w < h) + h * (w > h)) * 0.4
-        p1 = [int(x - scale), int(y - scale)]
-        p2 = [int(x + w + scale), int(y + h + scale)]
-
-        rect = img[p1[1]:p2[1], p1[0]:p2[0]]
-        # ignoring warning from mean calculation
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore", category=RuntimeWarning)
-            avg_color_bgr = np.mean(rect, axis=(0, 1))
-
-        # algorithm to calculate the closest color to given set of colors
-        if not (np.isnan(avg_color_bgr).any() or np.isinf(avg_color_bgr).any()):
-            avg_color_bgr = np.round(avg_color_bgr).astype(int)
-            avg_color_rgb = avg_color_bgr[::-1]
-            r = avg_color_rgb[0]
-            g = avg_color_rgb[1]
-            b = avg_color_rgb[2]
-
-            min_distance = float("inf")
-            for color, value in colors.items():
-                dist = sum([(i - j) ** 2 for i, j in zip((r, g, b), value)])
-                if dist < min_distance:
-                    min_distance = dist
-                    closest_color = color
-            fit = int(100 - (min_distance * 0.001))
-
-        # if closest_color is not "black":
-        # draw rect to calculate avg color
-        # img = cv2.rectangle(img, (p1[0], p1[1]), (p2[0], p2[1]),
-        #                     (255, 255, 255), 1)
-
-        return closest_color, fit
-
-    @staticmethod
-    def pick_object(image, contours):
+    def pick_object(image, contours, distance):
         # contour element:
-        # [i, x, y, w, h, box, width_cm, length_cm, dist, color, fit]
+        # [i, x, y, w, h, box]
         # i - index,
         # x, y - pos
         # w, h - size
         # box - cv2 rectangle box coordinates
-        # width_cm, length_cm - calculated real size of object
-        # dist [cm] - calculated distance from camera
-        # color - color of detected object
-        # fit - confidence of picked color <0 - 100>
-        picked_object = [0, 0, 0, 0, 0, 0, 0, 0, 0, "black", 0]
+        picked_object = [0, 0, 0, 0, 0, 0]
         if len(contours) == 1:
             picked_object = contours[0]
         # else:
@@ -253,16 +162,15 @@ class Utils:
 
         pos_x = picked_object[1]
         pos_y = picked_object[2]
-        color = picked_object[9]
         width = picked_object[3]
         height = picked_object[4]
-        dist = picked_object[8]
-        fit = picked_object[10]
+        box = picked_object[5]
 
-        cv2.drawContours(image, [picked_object[5]], 0, (0, 255, 0), 3)
-        render_info(image, color, fit, pos_x, pos_y, width, height, dist)
+        # green rectangle is picked
+        cv2.drawContours(image, [box], 0, (0, 255, 0), 3)
+        render_info(image, pos_x, pos_y, width, height, distance)
 
-        return [pos_x, pos_y, color, width, height, dist]
+        return [pos_x, pos_y, width, height]
 
     def print_param(self):
         print(f"Threshold1: {self.threshold1} \n"
@@ -274,3 +182,75 @@ class Utils:
               f"Exposure: {self.exposure} \n"
               f"Lower color: {self.lower_color} \n"
               f"Upper color: {self.upper_color} \n")
+
+
+
+    # DEPRECATED
+    # # APPROXIMATING REAL LENGTH AND COLOR OF OBJECT
+    # @staticmethod
+    # def approx_length(rect, object_w, object_l):
+    #     # 1
+    #     # https://stackoverflow.com/questions/14038002/opencv-how-to-calculate-distance-between-camera-and-object-using-image
+    #     # 2
+    #     # https://stackoverflow.com/questions/6714069/finding-distance-from-camera-to-object-of-known-size
+    #     # 3
+    #     # https://pyimagesearch.com/2015/01/19/find-distance-camera-objectmarker-using-python-opencv/
+
+    #     # focal_length = (width [px] * real_distance)  / real_width
+    #     # dist = (real_width * focal_length) / width [px]
+    #     focal_length = (290 * 24) / object_w
+    #     dist = (object_w * focal_length) / rect[1][0]
+    #     distance_m = round(dist, 2)
+
+    #     width_px = rect[1][0]
+    #     height_px = rect[1][1]
+    #     # distance_m = round(83 / height_px, 2)
+    #     length_cm = height_px
+    #     width_cm = width_px
+    #     return width_cm, length_cm, distance_m
+
+    # @staticmethod
+    # def approx_color(img, x, y, w, h):
+    #     closest_color = "black"
+    #     fit = "0"
+    #     colors = {
+    #         # "white": (255, 255, 255),
+    #         "black": (0, 0, 0),
+    #         "red": (255, 0, 0),
+    #         "green": (0, 255, 0),
+    #         "blue": (0, 0, 255)
+    #     }
+
+    #     # first method
+    #     scale = (w * (w < h) + h * (w > h)) * 0.4
+    #     p1 = [int(x - scale), int(y - scale)]
+    #     p2 = [int(x + w + scale), int(y + h + scale)]
+
+    #     rect = img[p1[1]:p2[1], p1[0]:p2[0]]
+    #     # ignoring warning from mean calculation
+    #     with warnings.catch_warnings():
+    #         warnings.simplefilter("ignore", category=RuntimeWarning)
+    #         avg_color_bgr = np.mean(rect, axis=(0, 1))
+
+    #     # algorithm to calculate the closest color to given set of colors
+    #     if not (np.isnan(avg_color_bgr).any() or np.isinf(avg_color_bgr).any()):
+    #         avg_color_bgr = np.round(avg_color_bgr).astype(int)
+    #         avg_color_rgb = avg_color_bgr[::-1]
+    #         r = avg_color_rgb[0]
+    #         g = avg_color_rgb[1]
+    #         b = avg_color_rgb[2]
+
+    #         min_distance = float("inf")
+    #         for color, value in colors.items():
+    #             dist = sum([(i - j) ** 2 for i, j in zip((r, g, b), value)])
+    #             if dist < min_distance:
+    #                 min_distance = dist
+    #                 closest_color = color
+    #         fit = int(100 - (min_distance * 0.001))
+
+    #     # if closest_color is not "black":
+    #     # draw rect to calculate avg color
+    #     # img = cv2.rectangle(img, (p1[0], p1[1]), (p2[0], p2[1]),
+    #     #                     (255, 255, 255), 1)
+
+    #     return closest_color, fit
