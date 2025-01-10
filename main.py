@@ -6,6 +6,8 @@ from src.app.gui import App
 from src.camera.camera_read import start_capture
 
 
+###################################################################
+
 DO_CHANGE_ENV = True
 ENV_DISPLAY_CAMERA = ":0"
 ENV_DISPLAY_APP = ":1"
@@ -18,6 +20,8 @@ CAMERA_MODES = [
     [1536, 864, 90]
 ]
 
+# Variables for camera
+
 ENV_CAMERA = {
     "MODE": 0, 
     "DISPLAY_W": 600,
@@ -29,6 +33,11 @@ ENV_CAMERA = {
     "SATURATION": 1.0,
     "AUTO_EXPOSURE": False # Domyślnie brak blokadu autoekspozycji
 }
+
+
+###################################################################
+
+
 
 def start_camera():
 

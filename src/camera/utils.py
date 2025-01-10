@@ -231,25 +231,25 @@ class Utils:
         picked_object = [0, 0, 0, 0, 0, 0, 0, 0, 0, "black", 0]
         if len(contours) == 1:
             picked_object = contours[0]
-        else:
-            for index, cont in enumerate(contours):
-                for index1, cont1 in enumerate(contours):
-                    if index == index1:
-                        break
-                    curr_pos_x = cont[1]
-                    curr_pos_y = cont[2]
-                    curr_width = cont[3]
+        # else:
+        #     for index, cont in enumerate(contours):
+        #         for index1, cont1 in enumerate(contours):
+        #             if index == index1:
+        #                 break
+        #             curr_pos_x = cont[1]
+        #             curr_pos_y = cont[2]
+        #             curr_width = cont[3]
 
-                    other_pos_x = cont1[1]
-                    other_pos_y = cont1[2]
-                    other_width = cont1[3]
+        #             other_pos_x = cont1[1]
+        #             other_pos_y = cont1[2]
+        #             other_width = cont1[3]
 
-                    # if two have same pos_x value, pick the lowest one
-                    if (curr_pos_x >= other_pos_x - other_width * 5) and (curr_pos_x <= other_pos_x + other_width * 5):
-                        if curr_pos_y - other_pos_y < 0:
-                            picked_object = cont1
-                        else:
-                            picked_object = cont
+        #             # if two have same pos_x value, pick the lowest one
+        #             if (curr_pos_x >= other_pos_x - other_width * 5) and (curr_pos_x <= other_pos_x + other_width * 5):
+        #                 if curr_pos_y - other_pos_y < 0:
+        #                     picked_object = cont1
+        #                 else:
+        #                     picked_object = cont
 
         pos_x = picked_object[1]
         pos_y = picked_object[2]
@@ -259,9 +259,8 @@ class Utils:
         dist = picked_object[8]
         fit = picked_object[10]
 
-        if color != "black":
-            cv2.drawContours(image, [picked_object[5]], 0, (0, 0, 0), 3)
-            render_info(image, color, fit, pos_x, pos_y, width, height, dist)
+        cv2.drawContours(image, [picked_object[5]], 0, (0, 255, 0), 3)
+        render_info(image, color, fit, pos_x, pos_y, width, height, dist)
 
         return [pos_x, pos_y, color, width, height, dist]
 

@@ -7,6 +7,9 @@ class Communicator():
         self.toggle = False
         self.driver = Driver()
 
+    def get_servo_angles(self):
+        return self.driver.get_servo_angles()
+
     def get_com_ports(self):
         return self.driver.get_com_ports()
 

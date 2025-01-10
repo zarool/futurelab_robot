@@ -168,6 +168,9 @@ class Driver:
     def get_data(self):
         return self.id, self.voltage, self.current, self.temperature, self.positions, self.load
 
+    def get_servo_angles(self):
+        return [30, 45]
+
 # def refresh_com_ports(com_ports_var, combobox):
 #     com_ports = get_com_ports()
 #     com_ports_var.set(com_ports)

@@ -14,7 +14,7 @@ def toRedis(r,a,n):
    encoded = shape + a.tobytes()
 
    # Store encoded data in Redis
-   r.set(n,encoded)
+   r.set(n, encoded)
    return
 
 

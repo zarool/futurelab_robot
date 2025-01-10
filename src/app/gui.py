@@ -80,7 +80,10 @@ class App:
         self.camera1.grid(column=self.camera1_grid[0], row=self.camera1_grid[1], rowspan=self.frame_rowspan)
         self.camera1_contour.grid(column=self.camera1_grid[0], row=self.camera1_grid[1] + self.frame_rowspan, rowspan=self.frame_rowspan)
 
-        
+        self.distance = 0
+
+        self.label_distance = ctk.CTkLabel(self.camera_frame, text=f"Calculated distance: {self.distance} [cm]")
+        self.label_distance.grid(row=9, column=0)
         ########################
         ########## robot
 
@@ -211,6 +214,13 @@ class App:
             ), 5, 0, 10, 10
         )
 
+        btn_center_on_object = ui.button(self.camera_frame, "Center cameras", None,
+            lambda: self.center_camera(
+                self.camera.get_object_info(0), 
+                self.camera.get_object_info(1)
+            ), 6, 0, 10, 10
+        )
+
         nr_1 = ui.slider(self.camera_frame, 1, 3, 0, 254, 10, 10, "1", "Threshold 1", 2, cam=self.camera, value=150)
         nr_2 = ui.slider(self.camera_frame, 2, 3, 0, 254, 10, 10, "2", "Threshold 2", 2, cam=self.camera, value=120)
         nr_3 = ui.slider(self.camera_frame, 3, 3, 0, 100, 10, 10, "3", "Epsilon [%]", 2, cam=self.camera, value=10)
@@ -223,9 +233,6 @@ class App:
         for slider, position in zip(self.sliders, self.camera.get_param()):
             slider.slider.set(position)
             slider.update_label(position)
-
-
-        # button_showcase = ui.button(self.main_frame, "Showcase", None, self.communicator.showcase_camera, 11, 5, 10, 10)
 
         ########################
         ########## CONNECTION SECTION
@@ -254,10 +261,11 @@ class App:
 
         # read images from camera process using redis
         self.read_camera()
+        self.root.after(100, self.update_distance)
 
         self.event_handler()
-        # self.root.after(100, self.update_table)
         self.root.mainloop()
+
 
 ###################################
 ####### camera
@@ -279,6 +287,40 @@ class App:
             image=ctk.CTkImage(img1_cnt, size=(self.frame_size)))
 
         self.camera0.after(1, self.read_camera)
+
+
+###################################
+####### distance calculation
+
+    def update_distance(self):
+        theta0, theta1 = self.communicator.get_servo_angles()
+
+        self.distance = self.calc_distance(theta0, theta1)
+
+        self.label_distance.set(f"Calculated distance: {self.distance} [cm]")
+
+    def calc_distance(self, length, theta0, theta1):
+        '''
+        length - length between both cameras
+        theta0 - camera0 angle (0;90) pointing at object
+        theta1 - camera1 angle (0;90) pointing at object
+        distance - in [cm]
+        https://stackoverflow.com/questions/37025296/calculate-the-postion-of-an-object-via-2-cameras
+        '''
+
+        distance = ( length * math.sin(theta0) * math.sin(theta1) ) / math.sin( theta0 + theta1 )
+
+        return distance
+
+    def center_camera(self, object0, object1):
+        object0_x = object0[0]
+        object0_y = object0[1]
+
+        object1_x = object1[0]
+        object1_y = object1[1]
+
+        pass
+    
 
 ###################################
 ####### robot
