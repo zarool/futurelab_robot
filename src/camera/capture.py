@@ -59,23 +59,23 @@ class Camera:
     def change_param(self, id, param):
         id = int(id)
         param = int(param)
-        match id:
-            case 1:
-                self.utils.threshold1 = param
-            case 2:
-                self.utils.threshold2 = param
-            case 3:
-                self.utils.epsilon = param
-            case 4:
-                self.utils.max_area = param
-            case 5:
-                self.utils.min_area = param
-            case 6:
-                self.utils.brightness_v = param
-            case 7:
-                self.utils.contrast_v = param
-            case _:
-                pass
+
+        if id == 1:
+            self.utils.threshold1 = param
+        elif id == 2:
+            self.utils.threshold2 = param
+        elif id == 3:
+            self.utils.epsilon = param
+        elif id == 4:
+            self.utils.max_area = param
+        elif id == 5:
+            self.utils.min_area = param
+        elif id == 6:
+            self.utils.brightness_v = param
+        elif id == 7:
+            self.utils.contrast_v = param
+        else:
+            pass
 
     def processing(self, frame):
         # 1
