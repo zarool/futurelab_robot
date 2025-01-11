@@ -123,7 +123,7 @@ class Utils:
             box = cnt[5]
 
             if draw_detect:
-                cv2.drawContours(final_image, [box], 0, (0, 0, 255), 2)
+                cv2.drawContours(final_image, [box], 0, (0, 0, 0), 2)
 
             if draw_info:
                 render_info(final_image, x, y, w, h, distance)
