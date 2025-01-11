@@ -217,17 +217,8 @@ class App:
             ), 5, 0, 10, 10
         )
 
-        btn_send_camera = ui.button(self.camera_frame, "Reset cameras servo", None,
-            lambda: self.communicator.driver.move_camera(
-                id_camera=int(self.entry_id.get()),
-                target_position=int(self.target_position.get()),
-                step_delay=float(self.step_delay.get()),
-                step_size=int(self.step_size.get())
-            ), 6, 0, 10, 10
-        )
-        
-        btn_center_on_object = ui.button(self.camera_frame, "Center cameras", None, self.center_camera, 7, 0, 10, 10)
-
+        btn_reset_camera = ui.button(self.camera_frame, "Reset cameras servo", None, self.reset_camera, 6, 0, 10, 10)
+        btn_center_camera = ui.button(self.camera_frame, "Center cameras", None, self.center_camera, 7, 0, 10, 10)
 
         nr_1 = ui.slider(self.camera_frame, 1, 3, 0, 254, 10, 10, "1", "Threshold 1", 2, cam=self.camera, value=150)
         nr_2 = ui.slider(self.camera_frame, 2, 3, 0, 254, 10, 10, "2", "Threshold 2", 2, cam=self.camera, value=120)
