@@ -51,6 +51,7 @@ class Camera:
         self.detected_object1 = [0, 0, 0, 0, 0, 0]
 
         self.distance = 0
+        self.center_scale = 10 # [%] how big or small should center of screen be to set camera
 
         # UTILS
         self.utils = Utils()
@@ -122,6 +123,27 @@ class Camera:
         self.image0, self.image0_contour, self.detected_object0 = self.processing(frame_camera0)
         self.image1, self.image1_contour, self.detected_object1 = self.processing(frame_camera1)
 
+
+    def object_in_center(self, object_id, frame_size):
+        center_width_ratio = 1 / self.center_scale  # Proportion of the width
+        center_height_ratio = 1 / self.center_scale  # Proportion of the height
+        
+        detected = self.get_object_info(object_id)
+
+        # detected[0] is top-left point in rectangle, we calculate according to center of it
+        pos_x = detected[0] + (detected[3] // 2)
+        center_x_start = frame_size[0] * (0.5 - center_width_ratio / 2)
+        center_x_end = frame_size[0] * (0.5 + center_width_ratio / 2)
+
+        # only assuming X axis, so pos_y not relevant
+        pos_y = detected[1]
+        center_y_start = frame_size[1] * (0.5 - center_height_ratio / 2)
+        center_y_end = frame_size[1] * (0.5 + center_height_ratio / 2) 
+
+        return center_x_start <= pos_x <= center_x_end
+    
+        # check also for y pos
+        # return center_x_start <= pos_x <= center_x_end and center_y_start <= pos_y <= center_y_end
 
     def get_image(self):
         img0 = Image.fromarray(cv2.cvtColor(self.image0, cv2.COLOR_BGR2RGB))

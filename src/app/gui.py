@@ -16,7 +16,7 @@ COLUMNS_TEXT = ("Id", "Voltage", "Current", "Temperature", "Position", "Load")
 COLUMNS_HEADER = ["Id", "Voltage", "Current", "Temperature", "Position", "Load"]
 
 class App:
-    def __init__(self, camera_mode_width, camera_mode_height) -> None:
+    def __init__(self, between_cameras, camera_mode_width, camera_mode_height) -> None:
         ########################
         ############## GUI CONST
         ctk.set_appearance_mode("dark")  # Ustawienie ciemnego trybu
@@ -24,7 +24,7 @@ class App:
 
         self.root = ctk.CTk()  # Użycie CTk zamiast Tk
         self.root.title("Robot Arm Inverse Kinematics")
-        # self.root.geometry("1980x1080+0+0")
+        self.root.geometry("1400x900")
 
         ########################
         ################ NAVBAR AND FRAMES
@@ -62,6 +62,8 @@ class App:
         ########################
         ########## camera
 
+        self.camera_mode_width = camera_mode_width
+
         self.frame_size = (400, 400)
         self.frame_rowspan = 7
         self.grid_pos_col = 1
@@ -81,8 +83,9 @@ class App:
         self.camera1_contour.grid(column=self.camera1_grid[0], row=self.camera1_grid[1] + self.frame_rowspan, rowspan=self.frame_rowspan)
 
         self.distance = 0
+        self.between_cameras = between_cameras # [cm]
 
-        self.label_distance = ctk.CTkLabel(self.camera_frame, text=f"Calculated distance: {self.distance} [cm]")
+        self.label_distance = ctk.CTkLabel(self.camera_frame, text=f"Calculated distance: \n{self.distance} [cm]")
         self.label_distance.grid(row=9, column=0)
         ########################
         ########## robot
@@ -205,7 +208,7 @@ class App:
         self.step_delay      = ui.text_gap(self.camera_frame, 100, 3, 0, 25, 10, "e")
         self.step_size       = ui.text_gap(self.camera_frame, 100, 4, 0, 25, 10, "e")
        
-        btn_send_camera = ui.button(self.camera_frame, "Send", None,
+        btn_send_camera = ui.button(self.camera_frame, "Send to camera", None,
             lambda: self.communicator.driver.move_camera(
                 id_camera=int(self.entry_id.get()),
                 target_position=int(self.target_position.get()),
@@ -214,12 +217,17 @@ class App:
             ), 5, 0, 10, 10
         )
 
-        btn_center_on_object = ui.button(self.camera_frame, "Center cameras", None,
-            lambda: self.center_camera(
-                self.camera.get_object_info(0), 
-                self.camera.get_object_info(1)
+        btn_send_camera = ui.button(self.camera_frame, "Reset cameras servo", None,
+            lambda: self.communicator.driver.move_camera(
+                id_camera=int(self.entry_id.get()),
+                target_position=int(self.target_position.get()),
+                step_delay=float(self.step_delay.get()),
+                step_size=int(self.step_size.get())
             ), 6, 0, 10, 10
         )
+        
+        btn_center_on_object = ui.button(self.camera_frame, "Center cameras", None, self.center_camera, 7, 0, 10, 10)
+
 
         nr_1 = ui.slider(self.camera_frame, 1, 3, 0, 254, 10, 10, "1", "Threshold 1", 2, cam=self.camera, value=150)
         nr_2 = ui.slider(self.camera_frame, 2, 3, 0, 254, 10, 10, "2", "Threshold 2", 2, cam=self.camera, value=120)
@@ -261,9 +269,10 @@ class App:
 
         # read images from camera process using redis
         self.read_camera()
-        self.root.after(100, self.update_distance)
 
         self.event_handler()
+
+        self.root.after(100, self.update_distance)
         self.root.mainloop()
 
 
@@ -271,6 +280,8 @@ class App:
 ####### camera
 
     def read_camera(self):
+        self.update_distance()
+
         self.camera.start()
 
         img0, img1 = self.camera.get_image()
@@ -295,10 +306,11 @@ class App:
     def update_distance(self):
         theta0, theta1 = self.communicator.get_servo_angles()
 
-        self.distance = self.calc_distance(theta0, theta1)
+        self.distance = self.calc_distance(self.between_cameras, theta0, theta1)
         self.camera.distance = self.distance
         
-        self.label_distance.set(f"Calculated distance: {self.distance} [cm]")
+        self.label_distance.configure(text=f"Calculated distance: \n{self.distance} [cm] \nLeft angle: {theta0} [deg] \nRight angle: {theta1} [deg]")
+
 
     def calc_distance(self, length, theta0, theta1):
         '''
@@ -309,22 +321,72 @@ class App:
         https://stackoverflow.com/questions/37025296/calculate-the-postion-of-an-object-via-2-cameras
         '''
 
-        distance = ( length * math.sin(theta0) * math.sin(theta1) ) / math.sin( theta0 + theta1 )
+        theta0_rad = math.radians(theta0)
+        theta1_rad = math.radians(theta1)
 
-        return distance
-
-    def center_camera(self, object0, object1):
+        distance = ( length * math.sin(theta0_rad) * math.sin(theta1_rad) ) / math.sin( theta0_rad + theta1_rad )
         
+        return round(distance, 2)
+
+    def center_camera(self):
+        screen_center = self.camera_mode_width // 2
+
         # ADJUST LEFT CAMERA TO CENTER OBJECT ON SCREEN
-        object0_x = object0[0]
-        object0_y = object0[1]
+        while not self.camera.object_in_center(0, self.frame_size):
+            object0_x = self.camera.detected_object0[0]
+
+            if object0_x < screen_center:
+                self.communicator.driver.increase_camera("left", 1)
+            elif object0_x > screen_center:
+                self.communicator.driver.increase_camera("left", -1)
 
         # ADJUST RIGHT CAMERA TO CENTER OBJECT ON SCREEN
-        object1_x = object1[0]
-        object1_y = object1[1]
-
-        pass
+        while not self.camera.object_in_center(1, self.frame_size):
+            object1_x = self.camera.detected_object1[0]
+            
+            if object1_x < screen_center:
+                self.communicator.driver.increase_camera("right", -1)
+            elif object1_x > screen_center:
+                self.communicator.driver.increase_camera("right", 1)
     
+    def reset_camera(self):
+        # ID:       ZAKRES:       PARA:
+        #   2 UP/DOWN   0-80        LEWA
+        #   3 ROTATION  0-140       LEWA
+        #   4 ROTATION  0-180       PRAWA
+        #   5 UP/DOWN   0-80        PRAWA
+        camera_reset = {
+            "left": {
+                "id": 3,
+                "angle": 45
+            },
+
+            "right": {
+                "id": 4,
+                "angle": 45
+            }
+        }
+
+        step_delay = 1
+        step_size = 1
+
+        self.communicator.driver.move_camera(
+            id_camera =         camera_reset["left"]["id"], 
+            target_position =   camera_reset["left"]["angle"], 
+            step_delay =        step_delay,
+            step_size =         step_size
+        )
+
+        self.communicator.driver.move_camera(
+            id_camera =         camera_reset["right"]["id"], 
+            target_position =   camera_reset["right"]["angle"], 
+            step_delay =        step_delay,
+            step_size =         step_size
+        )
+
+        self.communicator.driver.camera_left_angle = camera_reset["left"]["angle"]
+        self.communicator.driver.camera_right_angle = camera_reset["right"]["angle"]
+
 
 ###################################
 ####### robot

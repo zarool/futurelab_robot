@@ -28,6 +28,39 @@ class Driver:
         self.ser_arduino = None
         self.ser_esp32 = None
 
+        self.camera_left_angle = 45
+        self.camera_right_angle = 45
+
+    def increase_camera(self, side_of_camera, dir):
+        if side_of_camera == "left":
+            self.camera_left_angle += dir
+        elif side_of_camera == "right":
+            self.camera_right_angle += dir
+
+        camera = {
+            "left": 
+            {
+                "id": 3,
+                "angle": self.camera_left_angle
+            },
+
+            "right": 
+            {
+                "id": 4,
+                "angle": self.camera_right_angle
+            }
+        }
+        step_delay = 1
+        step_size = 1
+
+        self.move_camera(
+            id_camera =         camera[side_of_camera]["id"], 
+            target_position =   camera[side_of_camera]["angle"], 
+            step_delay =        step_delay,
+            step_size =         step_size
+        )
+
+
     def move_camera(self, id_camera, target_position, step_delay, step_size):
         id_camera = int(id_camera)
         target_position = int(target_position)
@@ -169,7 +202,7 @@ class Driver:
         return self.id, self.voltage, self.current, self.temperature, self.positions, self.load
 
     def get_servo_angles(self):
-        return [30, 45]
+        return [self.camera_left_angle, self.camera_right_angle]
 
 #######################################
 # def refresh_com_ports(com_ports_var, combobox):

@@ -12,6 +12,8 @@ DO_CHANGE_ENV = True
 ENV_DISPLAY_CAMERA = ":0"
 ENV_DISPLAY_APP = ":1"
 
+ENV_DISTANCE_BETWEEN_CAMERAS = 60 # [cm]
+
 #########################
 # Camera modes for IMX708
 # [WIDTH, HEIGHT, FPS]
@@ -21,7 +23,6 @@ CAMERA_MODES = [
 ]
 
 # Variables for camera
-
 ENV_CAMERA = {
     "MODE": 0, 
     "DISPLAY_W": 600,
@@ -34,30 +35,26 @@ ENV_CAMERA = {
     "AUTO_EXPOSURE": False # Domyślnie brak blokadu autoekspozycji
 }
 
-
 ###################################################################
 
 
-
 def start_camera():
-
     if DO_CHANGE_ENV:
         os.environ["DISPLAY"] = ENV_DISPLAY_CAMERA
         print("[ ] Variable DISPLAY on camera process is", os.environ["DISPLAY"])
         print("[+] Started camera capture process. Saving frames to redis database")
 
-    # possible args
-    # display_w=800, display_h=500, capture_w=1280, capture_h=720, capture_fps=60, flip=2
-    start_capture(display_w = ENV_CAMERA["DISPLAY_W"], 
-                  display_h = ENV_CAMERA["DISPLAY_H"], 
-                  capture_w = CAMERA_MODES[ENV_CAMERA["MODE"]][0], 
-                  capture_h = CAMERA_MODES[ENV_CAMERA["MODE"]][1], 
-                  capture_fps = CAMERA_MODES[ENV_CAMERA["MODE"]][2], 
-                  flip = ENV_CAMERA["FLIP"],
-                  exposure = ENV_CAMERA["EXPOSURE"],
-                  tnr_strength = ENV_CAMERA["TNR_STRENGTH"],
-                  wb_mode = ENV_CAMERA["WB_MODE"],
-                  auto_exposure = ENV_CAMERA["AUTO_EXPOSURE"])
+    start_capture(
+        display_w =     ENV_CAMERA["DISPLAY_W"], 
+        display_h =     ENV_CAMERA["DISPLAY_H"], 
+        capture_w =     CAMERA_MODES[ENV_CAMERA["MODE"]][0], 
+        capture_h =     CAMERA_MODES[ENV_CAMERA["MODE"]][1], 
+        capture_fps =   CAMERA_MODES[ENV_CAMERA["MODE"]][2], 
+        flip =          ENV_CAMERA["FLIP"],
+        exposure =      ENV_CAMERA["EXPOSURE"],
+        tnr_strength =  ENV_CAMERA["TNR_STRENGTH"],
+        wb_mode =       ENV_CAMERA["WB_MODE"],
+        auto_exposure = ENV_CAMERA["AUTO_EXPOSURE"])
 
 
 def start_app():
@@ -66,7 +63,11 @@ def start_app():
         print("[ ] Variable DISPLAY on app process is", os.environ["DISPLAY"])
         print("[+] Started GUI app.")
     
-    app = App(CAMERA_MODES[ENV_CAMERA["MODE"]][0], CAMERA_MODES[ENV_CAMERA["MODE"]][1])
+    app = App(
+        ENV_DISTANCE_BETWEEN_CAMERAS, 
+        CAMERA_MODES[ENV_CAMERA["MODE"]][0], 
+        CAMERA_MODES[ENV_CAMERA["MODE"]][1])
+    
     app.run()
 
 

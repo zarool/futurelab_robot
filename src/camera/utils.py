@@ -137,9 +137,37 @@ class Utils:
         # x, y - pos
         # w, h - size
         # box - cv2 rectangle box coordinates
-        picked_object = [0, 0, 0, 0, 0, 0]
+        picked_object = [0, 0, 0, 0, 0, [0]]
         if len(contours) == 1:
             picked_object = contours[0]
+
+        pos_x = picked_object[1]
+        pos_y = picked_object[2]
+        width = picked_object[3]
+        height = picked_object[4]
+        box = picked_object[5]
+
+        # picked object is render as green rectangle
+        if len(box) > 3:
+            cv2.drawContours(image, [box], 0, (0, 255, 0), 3)
+            render_info(image, pos_x, pos_y, width, height, distance)
+
+
+        return [pos_x, pos_y, width, height]
+
+    def print_param(self):
+        print(f"Threshold1: {self.threshold1} \n"
+              f"Threshold2; {self.threshold2} \n"
+              f"Min_area: {self.min_area} \n"
+              f"Max_area: {self.max_area} \n"
+              f"Brightness: {self.brightness_v} \n"
+              f"Contrast: {self.contrast_v} \n"
+              f"Exposure: {self.exposure} \n"
+              f"Lower color: {self.lower_color} \n"
+              f"Upper color: {self.upper_color} \n")
+
+
+
         # else:
         #     for index, cont in enumerate(contours):
         #         for index1, cont1 in enumerate(contours):
@@ -159,31 +187,6 @@ class Utils:
         #                     picked_object = cont1
         #                 else:
         #                     picked_object = cont
-
-        pos_x = picked_object[1]
-        pos_y = picked_object[2]
-        width = picked_object[3]
-        height = picked_object[4]
-        box = picked_object[5]
-
-        # green rectangle is picked
-        cv2.drawContours(image, [box], 0, (0, 255, 0), 3)
-        render_info(image, pos_x, pos_y, width, height, distance)
-
-        return [pos_x, pos_y, width, height]
-
-    def print_param(self):
-        print(f"Threshold1: {self.threshold1} \n"
-              f"Threshold2; {self.threshold2} \n"
-              f"Min_area: {self.min_area} \n"
-              f"Max_area: {self.max_area} \n"
-              f"Brightness: {self.brightness_v} \n"
-              f"Contrast: {self.contrast_v} \n"
-              f"Exposure: {self.exposure} \n"
-              f"Lower color: {self.lower_color} \n"
-              f"Upper color: {self.upper_color} \n")
-
-
 
     # DEPRECATED
     # # APPROXIMATING REAL LENGTH AND COLOR OF OBJECT

@@ -1,2 +1,0 @@
-src.servo.driver.get_servo_angles - get angles from both cameras
-src.app.gui.center_camera - algorithm to move camera servo according to center object
