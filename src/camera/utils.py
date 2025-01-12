@@ -21,7 +21,7 @@ class Utils:
         self.threshold2 = 120
         self.epsilon = 10
         self.min_area = 350
-        self.max_area = 2000
+        self.max_area = 8000
         self.brightness_v = 0
         self.contrast_v = 10
         self.lower_color = np.array([0, 0, 0])

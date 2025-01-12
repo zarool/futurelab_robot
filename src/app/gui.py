@@ -2,6 +2,7 @@ import customtkinter as ctk
 import tkinter as tk
 from tkinter import ttk
 
+import time
 import math
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
@@ -295,35 +296,49 @@ class App:
 ####### distance calculation
 
     def update_distance(self):
-        theta0, theta1 = self.communicator.get_servo_angles()
+        pos_left, pos_right = self.communicator.get_servo_pos()
 
-        self.distance = self.calc_distance(self.between_cameras, theta0, theta1)
-        self.camera.distance = self.distance
+        self.distance = self.calc_distance(self.between_cameras, pos_left, pos_right)
+        self.camera.distance, theta_l, theta_r = self.distance
         
-        self.label_distance.configure(text=f"Calculated distance: \n{self.distance} [cm] \nLeft angle: {theta0} [deg] \nRight angle: {theta1} [deg]")
+        self.label_distance.configure(text=f"Calculated distance: \n{self.distance} [cm] \nLeft angle: {theta_l} [deg] \nRight angle: {theta_r} [deg]")
 
 
-    def calc_distance(self, length, theta0, theta1):
+    def calc_distance(self, length, pos_l, pos_r):
         '''
         length - length between both cameras
-        theta0 - camera0 angle (0;90) pointing at object
-        theta1 - camera1 angle (0;90) pointing at object
+        point_left - camera0 left angle on servo pointing downward is 45
+        point_right - camera0 left angle on servo pointing downward is 35
+        theta_l - camera0 angle (0;90) pointing at object
+        theta_r - camera1 angle (0;90) pointing at object
         distance - in [cm]
         https://stackoverflow.com/questions/37025296/calculate-the-postion-of-an-object-via-2-cameras
         '''
+        point_left = 45
+        point_right = 35
 
-        theta0_rad = math.radians(theta0)
-        theta1_rad = math.radians(theta1)
+        theta_l = 90 - (point_left - pos_l)
+        theta_r = 90 - (point_right - pos_r)
+
+        theta0_rad = math.radians(theta_l)
+        theta1_rad = math.radians(theta_r)
 
         distance = ( length * math.sin(theta0_rad) * math.sin(theta1_rad) ) / math.sin( theta0_rad + theta1_rad )
         
-        return round(distance, 2)
+        return round(distance, 2), theta_l, theta_r
 
     def center_camera(self):
-        screen_center = self.camera_mode_width // 2
+        '''
+        MOVE CAMERA IF: PICKED OBJECT EXISTS, PICKED OBJECT IS NOT IN CENTER AND CAMERA DIDN'T REACH MAX VALUE OF MOVEMENT
+        '''
+
+        screen_center = self.frame_size[0] // 2
 
         # ADJUST LEFT CAMERA TO CENTER OBJECT ON SCREEN
-        while not self.camera.object_in_center(0, self.frame_size):
+        while self.camera.object_is_detected(0) and \
+                not self.camera.object_in_center(0, self.frame_size) and \
+                not self.communicator.driver.camera_left_max:
+            
             object0_x = self.camera.detected_object0[0]
 
             if object0_x < screen_center:
@@ -332,7 +347,10 @@ class App:
                 self.communicator.driver.increase_camera("left", -1)
 
         # ADJUST RIGHT CAMERA TO CENTER OBJECT ON SCREEN
-        while not self.camera.object_in_center(1, self.frame_size):
+        while self.camera.object_is_detected(1) and \
+                not self.camera.object_in_center(1, self.frame_size) and \
+                not self.communicator.driver.camera_right_max:
+            
             object1_x = self.camera.detected_object1[0]
             
             if object1_x < screen_center:
@@ -340,44 +358,6 @@ class App:
             elif object1_x > screen_center:
                 self.communicator.driver.increase_camera("right", 1)
     
-    def reset_camera(self):
-        # ID:       ZAKRES:       PARA:
-        #   2 UP/DOWN   0-80        LEWA
-        #   3 ROTATION  0-140       LEWA
-        #   4 ROTATION  0-180       PRAWA
-        #   5 UP/DOWN   0-80        PRAWA
-        camera_reset = {
-            "left": {
-                "id": 3,
-                "angle": 45
-            },
-
-            "right": {
-                "id": 4,
-                "angle": 45
-            }
-        }
-
-        step_delay = 1
-        step_size = 1
-
-        self.communicator.driver.move_camera(
-            id_camera =         camera_reset["left"]["id"], 
-            target_position =   camera_reset["left"]["angle"], 
-            step_delay =        step_delay,
-            step_size =         step_size
-        )
-
-        self.communicator.driver.move_camera(
-            id_camera =         camera_reset["right"]["id"], 
-            target_position =   camera_reset["right"]["angle"], 
-            step_delay =        step_delay,
-            step_size =         step_size
-        )
-
-        self.communicator.driver.camera_left_angle = camera_reset["left"]["angle"]
-        self.communicator.driver.camera_right_angle = camera_reset["right"]["angle"]
-
 
 ###################################
 ####### robot

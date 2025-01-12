@@ -28,38 +28,117 @@ class Driver:
         self.ser_arduino = None
         self.ser_esp32 = None
 
-        self.camera_left_angle = 45
-        self.camera_right_angle = 45
+        self.camera_left_pos = 45
+        self.camera_right_pos = 35
+        self.camera_left_max = False
+        self.camera_right_max = True
+
+        self.camera_step_delay = 0.05
+        self.camera_step_size = 1
 
     def increase_camera(self, side_of_camera, dir):
+        '''
+        Used to move camera left or right
+        '''
         if side_of_camera == "left":
-            self.camera_left_angle += dir
+            next_pos = self.camera_left_pos + dir
+            if 0 < next_pos < 80:
+                self.camera_left_pos = next_pos
+            else:
+                self.camera_left_max = True
+
         elif side_of_camera == "right":
-            self.camera_right_angle += dir
+            next_pos = self.camera_right_pos + dir
+            if 0 < next_pos < 80:
+                self.camera_right_pos = next_pos   
+            else:
+                self.camera_right_max = True        
 
         camera = {
             "left": 
             {
                 "id": 3,
-                "angle": self.camera_left_angle
+                "angle": self.camera_left_pos
             },
 
             "right": 
             {
                 "id": 4,
-                "angle": self.camera_right_angle
+                "angle": self.camera_right_pos
             }
         }
-        step_delay = 1
-        step_size = 1
 
         self.move_camera(
             id_camera =         camera[side_of_camera]["id"], 
             target_position =   camera[side_of_camera]["angle"], 
-            step_delay =        step_delay,
-            step_size =         step_size
+            step_delay =        self.camera_step_delay,
+            step_size =         self.camera_step_size
         )
+        time.sleep(0.5)
 
+    def reset_camera(self):
+        '''
+        Function will set camera to point downwards, freeze the program for about 12 seconds
+        '''
+
+        # ID:       ZAKRES:       PARA:
+        #   2 UP/DOWN   0-80        LEWA
+        #   3 ROTATION  0-140       LEWA
+        #   4 ROTATION  0-180       PRAWA
+        #   5 UP/DOWN   0-80        PRAWA
+        camera_reset = {
+            "left-up": {
+                "id": 2,
+                "angle": 45
+            },
+
+            "left-rotation": {
+                "id": 3,
+                "angle": 20
+            },
+
+            "right-rotation": {
+                "id": 4,
+                "angle": 125
+            },
+
+            "right-up": {
+                "id": 5,
+                "angle": 35
+            }
+        }
+
+        self.move_camera(
+            id_camera =         camera_reset["left-up"]["id"], 
+            target_position =   camera_reset["left-up"]["angle"], 
+            step_delay =        self.camera_step_delay,
+            step_size =         self.camera_step_size
+        )
+        time.sleep(3)
+        self.move_camera(
+            id_camera =         camera_reset["right-up"]["id"], 
+            target_position =   camera_reset["right-up"]["angle"], 
+            step_delay =        self.camera_step_delay,
+            step_size =         self.camera_step_size
+        )
+        time.sleep(3)
+        self.move_camera(
+            id_camera =         camera_reset["left-rotation"]["id"], 
+            target_position =   camera_reset["left-rotation"]["angle"], 
+            step_delay =        self.camera_step_delay,
+            step_size =         self.camera_step_size
+        )
+        time.sleep(3)
+        self.move_camera(
+            id_camera =         camera_reset["left-rotation"]["id"], 
+            target_position =   camera_reset["left-rotation"]["angle"], 
+            step_delay =        self.camera_step_delay,
+            step_size =         self.camera_step_size
+        )     
+        time.sleep(3)
+        
+        self.camera_left_pos = camera_reset["left-rotation"]["angle"]
+        self.camera_right_pos = camera_reset["right-rotation"]["angle"]
 
     def move_camera(self, id_camera, target_position, step_delay, step_size):
         id_camera = int(id_camera)
@@ -201,7 +280,7 @@ class Driver:
     def get_data(self):
         return self.id, self.voltage, self.current, self.temperature, self.positions, self.load
 
-    def get_servo_angles(self):
+    def get_servo_pos(self):
         return [self.camera_left_angle, self.camera_right_angle]
 
 #######################################

@@ -145,6 +145,14 @@ class Camera:
         # check also for y pos
         # return center_x_start <= pos_x <= center_x_end and center_y_start <= pos_y <= center_y_end
 
+    def object_is_detected(self, object_id):
+        detected = self.get_object_info(object_id)
+
+        if detected == [0, 0, 0, 0, 0, [0]]:
+            return False
+        
+        return True
+
     def get_image(self):
         img0 = Image.fromarray(cv2.cvtColor(self.image0, cv2.COLOR_BGR2RGB))
         img1 = Image.fromarray(cv2.cvtColor(self.image1, cv2.COLOR_BGR2RGB))
