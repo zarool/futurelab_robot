@@ -131,7 +131,7 @@ class Camera:
         detected = self.get_object_info(object_id)
 
         # detected[0] is top-left point in rectangle, we calculate according to center of it
-        pos_x = detected[0] + (detected[3] // 2)
+        pos_x = detected[0]
         center_x_start = frame_size[0] * (0.5 - center_width_ratio / 2)
         center_x_end = frame_size[0] * (0.5 + center_width_ratio / 2)
 

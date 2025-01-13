@@ -218,7 +218,7 @@ class App:
             ), 5, 0, 10, 10
         )
 
-        btn_reset_camera = ui.button(self.camera_frame, "Reset cameras servo", None, self.reset_camera, 6, 0, 10, 10)
+        btn_reset_camera = ui.button(self.camera_frame, "Reset cameras servo", None, self.communicator.driver.reset_camera, 6, 0, 10, 10)
         btn_center_camera = ui.button(self.camera_frame, "Center cameras", None, self.center_camera, 7, 0, 10, 10)
 
         nr_1 = ui.slider(self.camera_frame, 1, 3, 0, 254, 10, 10, "1", "Threshold 1", 2, cam=self.camera, value=150)
@@ -292,14 +292,32 @@ class App:
         self.camera0.after(1, self.read_camera)
 
 
+    def update_camera_for_movement(self):
+        self.update_distance()
+
+        self.camera.start()
+
+        img0, img1 = self.camera.get_image()
+        img0_cnt, img1_cnt = self.camera.get_contour()
+
+        self.camera0.configure(
+            image=ctk.CTkImage(img0, size=(self.frame_size)))
+        self.camera0_contour.configure(
+            image=ctk.CTkImage(img0_cnt, size=(self.frame_size)))
+
+        self.camera1.configure(
+            image=ctk.CTkImage(img1, size=(self.frame_size)))
+        self.camera1_contour.configure(
+            image=ctk.CTkImage(img1_cnt, size=(self.frame_size)))
+        
 ###################################
 ####### distance calculation
 
     def update_distance(self):
         pos_left, pos_right = self.communicator.get_servo_pos()
 
-        self.distance = self.calc_distance(self.between_cameras, pos_left, pos_right)
-        self.camera.distance, theta_l, theta_r = self.distance
+        self.distance, theta_l, theta_r = self.calc_distance(self.between_cameras, pos_left, pos_right)
+        self.camera.distance = self.distance
         
         self.label_distance.configure(text=f"Calculated distance: \n{self.distance} [cm] \nLeft angle: {theta_l} [deg] \nRight angle: {theta_r} [deg]")
 
@@ -317,8 +335,8 @@ class App:
         point_left = 45
         point_right = 35
 
-        theta_l = 90 - (point_left - pos_l)
-        theta_r = 90 - (point_right - pos_r)
+        theta_l = 90 - ((pos_l - point_left) * 0.7)
+        theta_r = 90 - ((point_right - pos_r) * 0.7)
 
         theta0_rad = math.radians(theta_l)
         theta1_rad = math.radians(theta_r)
@@ -345,6 +363,8 @@ class App:
                 self.communicator.driver.increase_camera("left", 1)
             elif object0_x > screen_center:
                 self.communicator.driver.increase_camera("left", -1)
+            
+            self.update_camera_for_movement()
 
         # ADJUST RIGHT CAMERA TO CENTER OBJECT ON SCREEN
         while self.camera.object_is_detected(1) and \
@@ -357,6 +377,8 @@ class App:
                 self.communicator.driver.increase_camera("right", -1)
             elif object1_x > screen_center:
                 self.communicator.driver.increase_camera("right", 1)
+            
+            self.update_camera_for_movement()
     
 
 ###################################

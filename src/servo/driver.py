@@ -30,8 +30,9 @@ class Driver:
 
         self.camera_left_pos = 45
         self.camera_right_pos = 35
+
         self.camera_left_max = False
-        self.camera_right_max = True
+        self.camera_right_max = False
 
         self.camera_step_delay = 0.05
         self.camera_step_size = 1
@@ -57,13 +58,13 @@ class Driver:
         camera = {
             "left": 
             {
-                "id": 3,
+                "id": 2,
                 "angle": self.camera_left_pos
             },
 
             "right": 
             {
-                "id": 4,
+                "id": 5,
                 "angle": self.camera_right_pos
             }
         }
@@ -130,15 +131,18 @@ class Driver:
         )
         time.sleep(3)
         self.move_camera(
-            id_camera =         camera_reset["left-rotation"]["id"], 
-            target_position =   camera_reset["left-rotation"]["angle"], 
+            id_camera =         camera_reset["right-rotation"]["id"], 
+            target_position =   camera_reset["right-rotation"]["angle"], 
             step_delay =        self.camera_step_delay,
             step_size =         self.camera_step_size
         )     
         time.sleep(3)
         
-        self.camera_left_pos = camera_reset["left-rotation"]["angle"]
-        self.camera_right_pos = camera_reset["right-rotation"]["angle"]
+        self.camera_left_pos = camera_reset["left-up"]["angle"]
+        self.camera_right_pos = camera_reset["right-up"]["angle"]
+
+        self.camera_left_max = False
+        self.camera_right_max = False
 
     def move_camera(self, id_camera, target_position, step_delay, step_size):
         id_camera = int(id_camera)
@@ -281,7 +285,7 @@ class Driver:
         return self.id, self.voltage, self.current, self.temperature, self.positions, self.load
 
     def get_servo_pos(self):
-        return [self.camera_left_angle, self.camera_right_angle]
+        return [self.camera_left_pos, self.camera_right_pos]
 
 #######################################
 # def refresh_com_ports(com_ports_var, combobox):
